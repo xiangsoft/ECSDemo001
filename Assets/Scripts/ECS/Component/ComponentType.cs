@@ -7,5 +7,6 @@
         Movement = 2,
         Projectile = 4,
         AI = 8,
+        ExpGem = 16,
     }
 }

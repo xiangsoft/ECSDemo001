@@ -15,6 +15,7 @@ namespace Xiangsoft.Lib.ECS.World
         public MovementComponent[] Movements;
         public ProjectileComponent[] Projectiles;
         public AIComponent[] AIs;
+        public ExpGemComponent[] ExpGems;
 
         public EntityStats[] StatsBridge;
         public SkillController[] SkillBridge;
@@ -29,6 +30,8 @@ namespace Xiangsoft.Lib.ECS.World
             Movements = new MovementComponent[maxEntities];
             Projectiles = new ProjectileComponent[maxEntities];
             AIs = new AIComponent[maxEntities];
+            ExpGems = new ExpGemComponent[maxEntities];
+
             StatsBridge = new EntityStats[maxEntities];
             SkillBridge = new SkillController[maxEntities];
 

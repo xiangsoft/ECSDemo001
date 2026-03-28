@@ -71,6 +71,7 @@ namespace Xiangsoft.Lib.ECS.World
             }
 
             EntityMasks[newID] = (ulong)ComponentMask.None;
+            ActiveEntityCount++;
 
             return new Entity { ID = newID };
         }

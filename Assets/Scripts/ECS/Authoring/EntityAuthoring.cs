@@ -97,11 +97,38 @@ namespace Xiangsoft.Lib.ECS.Authoring
         {
             if (IsPlayer)
             {
-                Debug.Log("玩家死亡，隐藏对象");
                 gameObject.SetActive(false);
             }
             else
             {
+                // ==========================================
+                // ★ 新增：怪物死亡，爆出经验球！
+                // ==========================================
+                if (ECSEngine.Instance != null && ExpGemPool.Instance != null)
+                {
+                    Entity gemEntity = ECSEngine.Instance.World.CreateEntity();
+                    if (gemEntity.ID != -1)
+                    {
+                        // 1. 填入 ECS 纯数据
+                        ref ExpGemComponent gemComp = ref ECSEngine.Instance.World.ExpGems[gemEntity.ID];
+                        gemComp.State = ExpGemState.Idle;
+                        gemComp.ExpValue = 10; // 假设每只怪掉 10 点经验
+                        gemComp.CurrentSpeed = 0f;
+
+                        // 2. 绑定皮囊
+                        GameObject gemGO = ExpGemPool.Instance.Get();
+                        gemGO.transform.position = transform.position; // 原地掉落
+
+                        TransformComponent tComp = ECSEngine.Instance.World.Transforms[gemEntity.ID];
+                        tComp.Transform = gemGO.transform;
+                        tComp.Position = transform.position;
+
+                        // 3. 赋予 DNA
+                        ulong gemMask = (ulong)(ComponentMask.Transform | ComponentMask.ExpGem);
+                        ECSEngine.Instance.World.EntityMasks[gemEntity.ID] = gemMask;
+                    }
+                }
+
                 UnitPool.Instance?.Release(this);
             }
 

@@ -940,6 +940,7 @@ GameObject:
   - component: {fileID: 1012124111}
   - component: {fileID: 1012124112}
   - component: {fileID: 1012124113}
+  - component: {fileID: 1012124114}
   m_Layer: 0
   m_Name: Pool
   m_TagString: Untagged
@@ -989,6 +990,19 @@ MonoBehaviour:
   poolConfigs:
   - Prefab: {fileID: 1300669076554622078, guid: 52448ac284bd4e845ac1072faaeba4c6, type: 3}
     InitialSize: 200
+--- !u!114 &1012124114
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1012124110}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6473f1d03de44b9438d4f3104013cbb2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gemPrefab: {fileID: 3144603089303208435, guid: d9f216dd515623e4bbd00d854fcd463e, type: 3}
 --- !u!1 &1114161030
 GameObject:
   m_ObjectHideFlags: 0

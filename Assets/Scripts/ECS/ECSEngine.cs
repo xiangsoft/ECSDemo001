@@ -53,7 +53,8 @@ namespace Xiangsoft.Lib.ECS
                 new MovementSystem(World, FlowGrid, SpatialGrid),
                 new TransformSyncSystem(World),
                 new ProjectileSystem(World, SpatialGrid),
-                new MeleeCombatSystem(World)
+                new MeleeCombatSystem(World),
+                new ExpGemSystem(World)
             };
         }
 

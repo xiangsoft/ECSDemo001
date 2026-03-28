@@ -27,7 +27,7 @@ namespace Xiangsoft.Lib.ECS.AI
 
             Vector3 playerPos = world.Transforms[playerID].Position;
 
-            for (int i = 0; i < world.ActiveEntityCount; i++)
+            for (int i = 0; i < world.MaxAllocatedID; i++)
             {
                 if ((world.EntityMasks[i] & requireMask) != requireMask)
                     continue;

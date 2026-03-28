@@ -76,7 +76,7 @@ namespace Xiangsoft.Lib.ECS
         private void rebuildSpatialGrid()
         {
             SpatialGrid.Clear();
-            for (int i = 0; i < World.ActiveEntityCount; i++)
+            for (int i = 0; i < World.MaxAllocatedID; i++)
             {
                 Vector3 pos = World.Transforms[i].Position;
                 SpatialGrid.Insert(i, pos);

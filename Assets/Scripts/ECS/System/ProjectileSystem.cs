@@ -29,7 +29,7 @@ namespace Xiangsoft.Lib.ECS.System
         public void Update(float deltaTime)
         {
             // 批量遍历所有实体，寻找激活的子弹
-            for (int i = 0; i < world.ActiveEntityCount; i++)
+            for (int i = 0; i < world.MaxAllocatedID; i++)
             {
                 if ((world.EntityMasks[i] & requireMask) != requireMask)
                     continue;

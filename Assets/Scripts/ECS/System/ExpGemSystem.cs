@@ -31,7 +31,7 @@ namespace Xiangsoft.Lib.ECS.System
             Vector3 playerPos = world.Transforms[playerID].Position;
             EntityStats playerStats = world.StatsBridge[playerID];
 
-            for (int i = 0; i < world.ActiveEntityCount; i++)
+            for (int i = 0; i < world.MaxAllocatedID; i++)
             {
                 if ((world.EntityMasks[i] & requireMask) != requireMask) 
                     continue;

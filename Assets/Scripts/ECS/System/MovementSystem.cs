@@ -31,7 +31,7 @@ namespace Xiangsoft.Lib.ECS.System
         {
             float time = Time.time;
 
-            for (int i = 0; i < world.ActiveEntityCount; i++)
+            for (int i = 0; i < world.MaxAllocatedID; i++)
             {
                 if ((world.EntityMasks[i] & requireMask) != requireMask)
                     continue;

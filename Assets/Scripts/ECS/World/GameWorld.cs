@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 using Xiangsoft.Game.Skill;
 using Xiangsoft.Lib.ECS.Attribute;
 using Xiangsoft.Lib.ECS.Component;
@@ -20,7 +22,9 @@ namespace Xiangsoft.Lib.ECS.World
         public EntityStats[] StatsBridge;
         public SkillController[] SkillBridge;
 
-        public int ActiveEntityCount = 0;
+        private Queue<int> freeIDs = null;
+        public int MaxAllocatedID { get; private set; }
+        public int ActiveEntityCount { get; private set; }
 
         public GameWorld(int maxEntities)
         {
@@ -41,27 +45,51 @@ namespace Xiangsoft.Lib.ECS.World
                 Transforms[i] = new TransformComponent();
                 Projectiles[i].HitHistory = new int[256];
             }
+
+            freeIDs = new Queue<int>(maxEntities);
+            MaxAllocatedID = 0;
+            ActiveEntityCount = 0;
         }
 
         public Entity CreateEntity()
         {
-            if (ActiveEntityCount >= MaxEntities)
-                throw new Exception("Reached maximum entity limit!");
+            int newID = -1;
 
-            Entity entity = new Entity { ID = ActiveEntityCount };
-            EntityMasks[entity.ID] = (ulong)ComponentMask.None;
-            ActiveEntityCount++;
-            return entity;
+            if (freeIDs.Count > 0)
+            {
+                newID = freeIDs.Dequeue();
+            }
+            else if (MaxAllocatedID < MaxEntities)
+            {
+                newID = MaxAllocatedID;
+                MaxAllocatedID++;
+            }
+            else
+            {
+                Debug.LogWarning("ECS 实体数量已达上限！");
+                return new Entity { ID = -1 };
+            }
+
+            EntityMasks[newID] = (ulong)ComponentMask.None;
+
+            return new Entity { ID = newID };
         }
 
         public void DestroyEntity(Entity entity)
         {
-            if (entity.ID < 0 || entity.ID >= MaxEntities)
-                throw new Exception("Invalid entity ID!");
+            if (entity.ID == -1)
+                return;
+
+            //防止同时被多个系统销毁
+            if (EntityMasks[entity.ID] == (ulong)ComponentMask.None)
+                return;
 
             EntityMasks[entity.ID] = (ulong)ComponentMask.None;
-            StatsBridge[entity.ID] = null; // 切断桥梁引用
-            SkillBridge[entity.ID] = null;
+            if (StatsBridge[entity.ID] != null)
+                StatsBridge[entity.ID] = null;
+
+            freeIDs.Enqueue(entity.ID);
+            ActiveEntityCount--;
         }
     }
 }

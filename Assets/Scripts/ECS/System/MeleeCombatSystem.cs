@@ -32,7 +32,7 @@ namespace Xiangsoft.Lib.ECS.System
             if (playerStats == null || playerStats.IsDead)
                 return;
 
-            for (int i = 0; i < world.ActiveEntityCount; i++)
+            for (int i = 0; i < world.MaxAllocatedID; i++)
             {
                 if (playerID == i)
                     continue;

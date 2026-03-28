@@ -17,7 +17,7 @@ namespace Xiangsoft.Lib.ECS.System
 
         public void Update(float deltaTime)
         {
-            for (int i = 0; i < world.ActiveEntityCount; i++)
+            for (int i = 0; i < world.MaxAllocatedID; i++)
             {
                 if (ECSEngine.Instance.PlayerEntityID == i)
                     continue;

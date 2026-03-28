@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using Xiangsoft.Lib.ECS.AI;
+using Xiangsoft.Lib.ECS.Component;
 using Xiangsoft.Lib.ECS.Grid;
 using Xiangsoft.Lib.ECS.System;
 using Xiangsoft.Lib.ECS.World;
@@ -78,6 +79,9 @@ namespace Xiangsoft.Lib.ECS
             SpatialGrid.Clear();
             for (int i = 0; i < World.MaxAllocatedID; i++)
             {
+                if (World.EntityMasks[i] == (ulong)ComponentMask.None)
+                    continue;
+
                 Vector3 pos = World.Transforms[i].Position;
                 SpatialGrid.Insert(i, pos);
             }

@@ -5,20 +5,14 @@ using Xiangsoft.Lib.ECS.World;
 
 namespace Xiangsoft.Lib.ECS.AI
 {
-    public class MobAISystem : ISystem
+    public class MobAISystem : BaseSystem
     {
-        private GameWorld world;
-
-        private readonly ulong requireMask;
-
-        public MobAISystem(GameWorld world)
+        public MobAISystem(GameWorld world) : base(world)
         {
-            this.world = world;
-
             requireMask = (ulong)ComponentMask.AI;
         }
 
-        public void Update(float deltaTime)
+        public override void Update(float deltaTime)
         {
             int playerID = ECSEngine.Instance.PlayerEntityID;
 
@@ -29,7 +23,7 @@ namespace Xiangsoft.Lib.ECS.AI
 
             for (int i = 0; i < world.MaxAllocatedID; i++)
             {
-                if ((world.EntityMasks[i] & requireMask) != requireMask)
+                if (!isValidEntity(i))
                     continue;
 
                 ref AIComponent ai = ref world.AIs[i];

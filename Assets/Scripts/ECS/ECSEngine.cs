@@ -5,6 +5,7 @@ using Xiangsoft.Lib.ECS.Component;
 using Xiangsoft.Lib.ECS.Grid;
 using Xiangsoft.Lib.ECS.System;
 using Xiangsoft.Lib.ECS.World;
+using Xiangsoft.Lib.Interface;
 using Xiangsoft.Lib.Pathfinding;
 
 namespace Xiangsoft.Lib.ECS
@@ -32,7 +33,7 @@ namespace Xiangsoft.Lib.ECS
         // 暴露给外部 (如 Authoring) 访问的纯数据世界
         public GameWorld World { get; private set; }
 
-        private List<ISystem> systems = null;
+        private List<IUpdate> updates = null;
 
         private void Awake()
         {
@@ -48,7 +49,7 @@ namespace Xiangsoft.Lib.ECS
             Grid.CreateGrid();
             SpatialGrid = new SpatialHashECSGrid(Width, Height, CellSize);
 
-            systems = new List<ISystem>
+            updates = new List<IUpdate>
             {
                 new MobAISystem(World),
                 new MovementSystem(World, FlowGrid, SpatialGrid),
@@ -68,7 +69,7 @@ namespace Xiangsoft.Lib.ECS
 
             rebuildSpatialGrid();
 
-            foreach (ISystem system in systems)
+            foreach (ISystem system in updates)
             {
                 system.Update(deltaTime);
             }

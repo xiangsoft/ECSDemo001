@@ -8,30 +8,26 @@ using Xiangsoft.Lib.ECS.World;
 
 namespace Xiangsoft.Lib.ECS.System
 {
-    public class ProjectileSystem : ISystem
+    public class ProjectileSystem : BaseSystem
     {
-        private GameWorld world;
         private SpatialHashECSGrid spatialGrid;
 
         // 静态缓冲池，0 GC 接收网格查询结果
         private static List<int> hitBuffer = new List<int>(32);
 
-        private readonly ulong requireMask;
-
-        public ProjectileSystem(GameWorld world, SpatialHashECSGrid spatialGrid)
+        public ProjectileSystem(GameWorld world, SpatialHashECSGrid spatialGrid) : base(world)
         {
-            this.world = world;
             this.spatialGrid = spatialGrid;
 
             requireMask = (ulong)(ComponentMask.Transform | ComponentMask.Projectile);
         }
 
-        public void Update(float deltaTime)
+        public override void Update(float deltaTime)
         {
             // 批量遍历所有实体，寻找激活的子弹
             for (int i = 0; i < world.MaxAllocatedID; i++)
             {
-                if ((world.EntityMasks[i] & requireMask) != requireMask)
+                if (!isValidEntity(i))
                     continue;
 
                 // 使用 ref 获取引用，这样我们修改结构体的数据才会生效！

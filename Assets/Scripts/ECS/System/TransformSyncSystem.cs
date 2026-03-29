@@ -2,27 +2,21 @@
 
 namespace Xiangsoft.Lib.ECS.System
 {
-    public class TransformSyncSystem : ISystem
+    public class TransformSyncSystem : BaseSystem
     {
-        private World.GameWorld world;
-
-        private readonly ulong requireMask;
-
-        public TransformSyncSystem(World.GameWorld world)
+        public TransformSyncSystem(World.GameWorld world) : base(world)
         {
-            this.world = world;
-
             requireMask = (ulong)ComponentMask.Transform;
         }
 
-        public void Update(float deltaTime)
+        public override void Update(float deltaTime)
         {
             for (int i = 0; i < world.MaxAllocatedID; i++)
             {
                 if (ECSEngine.Instance.PlayerEntityID == i)
                     continue;
 
-                if ((world.EntityMasks[i] & requireMask) != requireMask)
+                if (!isValidEntity(i))
                     continue;
 
                 TransformComponent tComp = world.Transforms[i];

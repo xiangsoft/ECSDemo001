@@ -7,33 +7,29 @@ using Xiangsoft.Lib.Pathfinding;
 
 namespace Xiangsoft.Lib.ECS.System
 {
-    public class MovementSystem : ISystem
+    public class MovementSystem : BaseSystem
     {
-        private GameWorld world;
         private FlowFieldGrid flowGrid;
         private SpatialHashECSGrid spatialGrid;
 
         // 静态缓存池，用于寻找邻居，绝对 0 GC
         private List<int> neighborBuffer = new List<int>(64);
 
-        private readonly ulong requireMask;
-
-        public MovementSystem(GameWorld world, FlowFieldGrid flowGrid, SpatialHashECSGrid spatialGrid)
+        public MovementSystem(GameWorld world, FlowFieldGrid flowGrid, SpatialHashECSGrid spatialGrid) : base(world)
         {
-            this.world = world;
             this.flowGrid = flowGrid;
             this.spatialGrid = spatialGrid;
 
             requireMask = (ulong)(ComponentMask.Transform | ComponentMask.Movement);
         }
 
-        public void Update(float deltaTime)
+        public override void Update(float deltaTime)
         {
             float time = Time.time;
 
             for (int i = 0; i < world.MaxAllocatedID; i++)
             {
-                if ((world.EntityMasks[i] & requireMask) != requireMask)
+                if (!isValidEntity(i))
                     continue;
 
                 Vector3 currentPos = world.Transforms[i].Position;

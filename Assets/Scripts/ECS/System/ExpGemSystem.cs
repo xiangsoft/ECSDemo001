@@ -6,23 +6,19 @@ using Xiangsoft.Lib.ECS.World;
 
 namespace Xiangsoft.Lib.ECS.System
 {
-    public class ExpGemSystem : ISystem
+    public class ExpGemSystem : BaseSystem
     {
-        private GameWorld world;
-        private readonly ulong requireMask;
-
         // 策划配置项 (实际项目中可以提出来放到 ECSEngine 或主角属性里)
         private const float MAGNETIC_RADIUS_SQR = 3.5f * 3.5f; // 磁吸触发半径的平方
         private const float COLLECT_RADIUS_SQR = 0.5f * 0.5f;  // 吃到经验的判定半径平方
         private const float ACCELERATION = 20f;                // 磁吸时的加速度
 
-        public ExpGemSystem(GameWorld world)
+        public ExpGemSystem(GameWorld world): base(world)
         {
-            this.world = world;
             requireMask = (ulong)(ComponentMask.Transform | ComponentMask.ExpGem);
         }
 
-        public void Update(float deltaTime)
+        public override void Update(float deltaTime)
         {
             int playerID = ECSEngine.Instance.PlayerEntityID;
             if (playerID == -1)
@@ -33,7 +29,7 @@ namespace Xiangsoft.Lib.ECS.System
 
             for (int i = 0; i < world.MaxAllocatedID; i++)
             {
-                if ((world.EntityMasks[i] & requireMask) != requireMask) 
+                if (!isValidEntity(i)) 
                     continue;
 
                 ref ExpGemComponent gem = ref world.ExpGems[i];

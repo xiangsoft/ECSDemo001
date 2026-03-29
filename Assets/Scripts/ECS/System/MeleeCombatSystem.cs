@@ -6,20 +6,14 @@ using Xiangsoft.Lib.ECS.World;
 
 namespace Xiangsoft.Lib.ECS.System
 {
-    public class MeleeCombatSystem : ISystem
+    public class MeleeCombatSystem : BaseSystem
     {
-        private GameWorld world;
-
-        private readonly ulong requireMask;
-
-        public MeleeCombatSystem(GameWorld world)
+        public MeleeCombatSystem(GameWorld world) : base(world)
         {
-            this.world = world;
-
             requireMask = (ulong)ComponentMask.AI;
         }
 
-        public void Update(float deltaTime)
+        public override void Update(float deltaTime)
         {
             int playerID = ECSEngine.Instance.PlayerEntityID;
 
@@ -37,7 +31,7 @@ namespace Xiangsoft.Lib.ECS.System
                 if (playerID == i)
                     continue;
 
-                if ((world.EntityMasks[i] & requireMask) != requireMask)
+                if (!isValidEntity(i))
                     continue;
 
                 if (world.AIs[i].CurrentState != AIState.Attack)

@@ -11,6 +11,7 @@ namespace Xiangsoft.Lib.ECS.Component
         public Vector3 Direction;   // 飞行方向
         public float Speed;
         public int Damage;
+        public bool IsCrit;
         public float HitRadius;
 
         // 高级机制 (穿透与回旋)

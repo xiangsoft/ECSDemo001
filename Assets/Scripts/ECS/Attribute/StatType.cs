@@ -14,6 +14,7 @@ namespace Xiangsoft.Lib.ECS.Attribute
         SeparationWeight,
         WobbleSpeed,
         WobbleStrength,
+        CritMultiplier,
     }
 
     // 整型属性（主要用于等级、阵营、阶段等离散数值）

@@ -10,15 +10,22 @@ namespace Xiangsoft.Game.Skill
 
         public override void Execute(SkillContext context)
         {
-            if (context.Target == null || context.Target.IsDead) 
+            if (context.Target == null || context.Target.IsDead)
                 return;
+
+            // ★ 新增：获取暴击属性
+            float critRate = context.Caster.Get(FloatStat.CritRate);
+            // 如果策划没配倍率，默认给 2.0 倍
+            float critMult = context.Caster.Get(FloatStat.CritMultiplier) <= 0f ? 2.0f : context.Caster.Get(FloatStat.CritMultiplier);
+
+            bool isCrit = Random.value < critRate;
 
             // 获取施法者的攻击力
             int casterAttack = context.Caster.Get(IntStat.Attack);
-            int finalDamage = Mathf.CeilToInt(casterAttack * DamageMultiplier);
-            
+            int finalDamage = Mathf.CeilToInt(casterAttack * DamageMultiplier * (isCrit ? critMult : 1.0f));
+
             // 对目标造成伤害
-            context.Target.TakeDamage(finalDamage);
+            context.Target.TakeDamage(finalDamage, isCrit);
         }
     }
 }

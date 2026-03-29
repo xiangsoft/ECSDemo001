@@ -39,7 +39,11 @@ namespace Xiangsoft.Lib.ECS.Skill
             fireDirection.y = 0; // 保持水平飞行
 
             int attack = context.Caster.Get(IntStat.Attack);
-            int damage = Mathf.CeilToInt(attack * damageMultiplier);
+            float critRate = context.Caster.Get(FloatStat.CritRate);
+            float critMult = context.Caster.Get(FloatStat.CritMultiplier) <= 0f ? 2.0f : context.Caster.Get(FloatStat.CritMultiplier);
+
+            bool isCrit = Random.value < critRate;
+            int damage = Mathf.CeilToInt(attack * damageMultiplier * (isCrit ? critMult : 1.0f));
 
             // 1. 获取施法者的 ECS ID (假设你可以通过 Caster 拿到它的 EntityID)
             // 在实际项目中，你可以在 EntityStats 里存一个 public int EntityID;
@@ -57,6 +61,7 @@ namespace Xiangsoft.Lib.ECS.Skill
             projComp.Direction = fireDirection;
             projComp.Speed = projectileSpeed;
             projComp.Damage = damage;
+            projComp.IsCrit = isCrit;
             projComp.HitRadius = hitRadius;
             projComp.MaxPiercing = maxPiercing;
             projComp.IsBoomerang = isBoomerang;

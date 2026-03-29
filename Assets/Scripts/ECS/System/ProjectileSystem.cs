@@ -113,7 +113,7 @@ namespace Xiangsoft.Lib.ECS.System
                         // ==========================================
                         // 命中！通过 Hybrid 桥梁呼叫 OOP 扣血逻辑
                         // ==========================================
-                        world.StatsBridge[targetID].TakeDamage(proj.Damage);
+                        world.StatsBridge[targetID].TakeDamage(proj.Damage, proj.IsCrit);
 
                         // 记入历史
                         if (proj.CurrentHitCount < proj.HitHistory.Length)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Xiangsoft.Game.UI;
 
 namespace Xiangsoft.Lib.ECS.Attribute
 {
@@ -164,8 +165,12 @@ namespace Xiangsoft.Lib.ECS.Attribute
             Set(type, Get(type) + delta);
         }
 
-        // 战斗专用扣血接口
-        public void TakeDamage(int damageAmount)
+        /// <summary>
+        /// 战斗专用扣血接口
+        /// </summary>
+        /// <param name="damageAmount"></param>
+        /// <param name="isCrit"></param>
+        public void TakeDamage(int damageAmount, bool isCrit = false)
         {
             if (IsDead)
                 return;
@@ -173,6 +178,11 @@ namespace Xiangsoft.Lib.ECS.Attribute
             int defense = Get(IntStat.Defense);
             int actualDamage = Mathf.Max(1, damageAmount - defense);
             Modify(IntStat.CurrentHealth, -actualDamage);
+
+            if (DamageTextManager.Instance == null)
+                return;
+
+            DamageTextManager.Instance.ShowDamage(actualDamage, transform.position, isCrit);
         }
 
         private void die()

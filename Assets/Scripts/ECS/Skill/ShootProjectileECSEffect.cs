@@ -4,6 +4,7 @@ using Xiangsoft.Lib.ECS.Attribute;
 using Xiangsoft.Lib.ECS.Authoring;
 using Xiangsoft.Lib.ECS.Component;
 using Xiangsoft.Lib.ECS.Pool;
+using Xiangsoft.Lib.LockStep;
 
 namespace Xiangsoft.Lib.ECS.Skill
 {
@@ -42,7 +43,7 @@ namespace Xiangsoft.Lib.ECS.Skill
             float critRate = context.Caster.Get(FloatStat.CritRate);
             float critMult = context.Caster.Get(FloatStat.CritMultiplier) <= 0f ? 2.0f : context.Caster.Get(FloatStat.CritMultiplier);
 
-            bool isCrit = Random.value < critRate;
+            bool isCrit = DeterministicRandom.value < critRate;
             int damage = Mathf.CeilToInt(attack * damageMultiplier * (isCrit ? critMult : 1.0f));
 
             // 1. 获取施法者的 ECS ID (假设你可以通过 Caster 拿到它的 EntityID)

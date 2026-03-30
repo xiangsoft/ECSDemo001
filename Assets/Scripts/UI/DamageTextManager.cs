@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using Xiangsoft.Lib.LockStep;
 
 namespace Xiangsoft.Game.UI
 {
@@ -105,7 +106,7 @@ namespace Xiangsoft.Game.UI
             tmp.gameObject.SetActive(true);
 
             // 稍微随机偏移一点，防止数字完全叠在一起
-            Vector3 randomOffset = new Vector3(Random.Range(-0.5f, 0.5f), 1f, Random.Range(-0.5f, 0.5f));
+            Vector3 randomOffset = new Vector3(DeterministicRandom.Range(-0.5f, 0.5f), 1f, DeterministicRandom.Range(-0.5f, 0.5f));
             Vector3 startPos = position + randomOffset;
 
             tmp.text = damage.ToString();

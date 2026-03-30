@@ -6,6 +6,7 @@ using Xiangsoft.Lib.ECS.Grid;
 using Xiangsoft.Lib.ECS.System;
 using Xiangsoft.Lib.ECS.World;
 using Xiangsoft.Lib.Interface;
+using Xiangsoft.Lib.LockStep;
 using Xiangsoft.Lib.Pathfinding;
 
 namespace Xiangsoft.Lib.ECS
@@ -34,8 +35,6 @@ namespace Xiangsoft.Lib.ECS
         public GameWorld World { get; private set; }
 
         private List<IUpdate> updates = null;
-        private List<ILateUpdate> lateUpdates = null;
-        private List<IFixedUpdate> fixedUpdates = null;
 
         private void Awake()
         {
@@ -61,47 +60,20 @@ namespace Xiangsoft.Lib.ECS
                 new ExpGemSystem(World)
             };
 
-            lateUpdates = new List<ILateUpdate>
-            {
-                // 可以添加需要在 Update 后执行的系统
-            };
-
-            fixedUpdates = new List<IFixedUpdate>
-            {
-                // 可以添加需要在 FixedUpdate 中执行的系统
-            };
+            TimeManager.Instance.RegisterLogicUpdate(logicUpdate);
+            TimeManager.Instance.StartLogic = true;
         }
 
-        private void Update()
+        private void logicUpdate(float logicTickTime)
         {
             if (World.ActiveEntityCount == 0)
                 return;
-
-            float deltaTime = Time.deltaTime;
 
             rebuildSpatialGrid();
 
             foreach (IUpdate update in updates)
             {
-                update.Update(deltaTime);
-            }
-        }
-
-        private void LateUpdate()
-        {
-            float deltaTime = Time.deltaTime;
-            foreach (ILateUpdate lateUpdate in lateUpdates)
-            {
-                lateUpdate.LateUpdate(deltaTime);
-            }
-        }
-
-        private void FixedUpdate()
-        {
-            float fixedDeltaTime = Time.fixedDeltaTime;
-            foreach (IFixedUpdate fixedUpdate in fixedUpdates)
-            {
-                fixedUpdate.FixedUpdate(fixedDeltaTime);
+                update.Update(logicTickTime);
             }
         }
 

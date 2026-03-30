@@ -4,6 +4,7 @@ using Xiangsoft.Game.Skill;
 using Xiangsoft.Lib.ECS.Attribute;
 using Xiangsoft.Lib.ECS.Component;
 using Xiangsoft.Lib.ECS.Pool;
+using Xiangsoft.Lib.LockStep;
 
 namespace Xiangsoft.Lib.ECS.Authoring
 {
@@ -68,7 +69,7 @@ namespace Xiangsoft.Lib.ECS.Authoring
                 mComp.SeparationWeight = stats.Get(FloatStat.SeparationWeight);
                 mComp.WobbleSpeed = stats.Get(FloatStat.WobbleSpeed);
                 mComp.WobbleStrength = stats.Get(FloatStat.WobbleStrength);
-                mComp.RandomPhase = Random.Range(0f, 100f);
+                mComp.RandomPhase = DeterministicRandom.Range(0f, 100f);
                 comMask |= (ulong)ComponentMask.Movement;
 
                 ref AIComponent ai = ref ECSEngine.Instance.World.AIs[entity.ID];

@@ -2,6 +2,7 @@
 using Xiangsoft.Lib.ECS;
 using Xiangsoft.Lib.ECS.Authoring;
 using Xiangsoft.Lib.ECS.Pool;
+using Xiangsoft.Lib.LockStep;
 
 namespace Xiangsoft.Game.Level
 {
@@ -78,6 +79,7 @@ namespace Xiangsoft.Game.Level
                 return;
             }
 
+            DeterministicRandom.SetSeed(19890817);
             IsPlaying = true;
 
             foreach (var wave in CurrentLevelData.Waves)
@@ -92,7 +94,7 @@ namespace Xiangsoft.Game.Level
         private void spawnEnemy(WaveEvent wave)
         {
             // 在主角周围随机生成一个圆环坐标 (屏幕外盲区)
-            Vector2 randomCircle = Random.insideUnitCircle.normalized * Random.Range(MinSpawnRadius, MaxSpawnRadius);
+            Vector2 randomCircle = DeterministicRandom.insideUnitCircle.normalized * DeterministicRandom.Range(MinSpawnRadius, MaxSpawnRadius);
             Vector3 spawnPos = PlayerTransform.position + new Vector3(randomCircle.x, 0, randomCircle.y);
 
             // 从对象池拿到怪物

@@ -1,4 +1,4 @@
-﻿using TrueSync;
+﻿using FixedMathSharp;
 using Xiangsoft.Lib.ECS.Attribute;
 using Xiangsoft.Lib.ECS.Component;
 using Xiangsoft.Lib.ECS.Pool;
@@ -9,22 +9,22 @@ namespace Xiangsoft.Lib.ECS.System
     public class ExpGemSystem : BaseSystem
     {
         // 策划配置项 (实际项目中可以提出来放到 ECSEngine 或主角属性里)
-        private static readonly FP MAGNETIC_RADIUS_SQR = FP.FromFloat(3.5f * 3.5f); // 磁吸触发半径的平方
-        private static readonly FP COLLECT_RADIUS_SQR = FP.FromFloat(0.5f * 0.5f);  // 吃到经验的判定半径平方
-        private static readonly FP ACCELERATION = FP.FromFloat(20f);                // 磁吸时的加速度
+        private static readonly Fixed64 MAGNETIC_RADIUS_SQR = new Fixed64(3.5f * 3.5f); // 磁吸触发半径的平方
+        private static readonly Fixed64 COLLECT_RADIUS_SQR = new Fixed64(0.5f * 0.5f);  // 吃到经验的判定半径平方
+        private static readonly Fixed64 ACCELERATION = new Fixed64(20f);                // 磁吸时的加速度
 
         public ExpGemSystem(GameWorld world) : base(world)
         {
             requireMask = (ulong)(ComponentMask.Transform | ComponentMask.ExpGem);
         }
 
-        public override void Update(FP deltaTime)
+        public override void Update(Fixed64 deltaTime)
         {
             int playerID = ECSEngine.Instance.PlayerEntityID;
             if (playerID == -1)
                 return;
 
-            TSVector playerPos = world.Transforms[playerID].Position;
+            Vector3d playerPos = world.Transforms[playerID].Position;
             EntityStats playerStats = world.StatsBridge[playerID];
 
             for (int i = 0; i < world.MaxAllocatedID; i++)
@@ -35,10 +35,10 @@ namespace Xiangsoft.Lib.ECS.System
                 ref ExpGemComponent gem = ref world.ExpGems[i];
                 TransformComponent tComp = world.Transforms[i];
 
-                TSVector gemPos = tComp.Position;
-                TSVector offset = playerPos - gemPos;
-                offset.y = 0;
-                FP sqrDist = offset.sqrMagnitude;
+                Vector3d gemPos = tComp.Position;
+                Vector3d offset = playerPos - gemPos;
+                offset.y = Fixed64.Zero;
+                Fixed64 sqrDist = offset.SqrMagnitude;
 
                 if (gem.State == ExpGemState.Idle)
                 {
@@ -46,7 +46,7 @@ namespace Xiangsoft.Lib.ECS.System
                     if (sqrDist <= MAGNETIC_RADIUS_SQR)
                     {
                         gem.State = ExpGemState.Attracting;
-                        gem.CurrentSpeed = 2f; // 给一个微小的初速度
+                        gem.CurrentSpeed = Fixed64.Two; // 给一个微小的初速度
                     }
                 }
                 else if (gem.State == ExpGemState.Attracting)
@@ -64,7 +64,7 @@ namespace Xiangsoft.Lib.ECS.System
 
                     // 加速飞行算法
                     gem.CurrentSpeed += ACCELERATION * deltaTime;
-                    TSVector moveDir = offset.normalized;
+                    Vector3d moveDir = offset.Normal;
                     tComp.Position += moveDir * gem.CurrentSpeed * deltaTime;
                 }
             }

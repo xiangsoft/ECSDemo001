@@ -1,4 +1,4 @@
-﻿using TrueSync;
+﻿using FixedMathSharp;
 
 namespace Xiangsoft.Lib.ECS.Component
 {
@@ -8,19 +8,19 @@ namespace Xiangsoft.Lib.ECS.Component
 
         // 基础属性
         public int CasterID;        // 施法者的实体 ID
-        public TSVector Direction;   // 飞行方向
-        public FP Speed;
+        public Vector3d Direction;   // 飞行方向
+        public Fixed64 Speed;
         public int Damage;
         public bool IsCrit;
-        public FP HitRadius;
+        public Fixed64 HitRadius;
 
         // 高级机制 (穿透与回旋)
         public int MaxPiercing;
         public bool IsBoomerang;
-        public FP MaxLifetime;
+        public Fixed64 MaxLifetime;
 
         // 运行时状态
-        public FP LifeTimer;
+        public Fixed64 LifeTimer;
         public int CurrentHitCount;
         public bool IsReturning;
 

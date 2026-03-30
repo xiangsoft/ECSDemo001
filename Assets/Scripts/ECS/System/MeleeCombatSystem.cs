@@ -1,4 +1,4 @@
-﻿using TrueSync;
+﻿using FixedMathSharp;
 using Xiangsoft.Game.Skill;
 using Xiangsoft.Lib.ECS.Attribute;
 using Xiangsoft.Lib.ECS.Component;
@@ -13,14 +13,14 @@ namespace Xiangsoft.Lib.ECS.System
             requireMask = (ulong)ComponentMask.AI;
         }
 
-        public override void Update(FP deltaTime)
+        public override void Update(Fixed64 deltaTime)
         {
             int playerID = ECSEngine.Instance.PlayerEntityID;
 
             if (playerID == -1)
                 return;
 
-            TSVector playerPos = world.Transforms[playerID].Position;
+            Vector3d playerPos = world.Transforms[playerID].Position;
             EntityStats playerStats = world.StatsBridge[playerID];
 
             if (playerStats == null || playerStats.IsDead)

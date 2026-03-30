@@ -1,4 +1,4 @@
-﻿using TrueSync;
+﻿using FixedMathSharp;
 
 namespace Xiangsoft.Lib.ECS.Component
 {
@@ -12,6 +12,6 @@ namespace Xiangsoft.Lib.ECS.Component
     {
         public ExpGemState State;
         public int ExpValue;        // 蕴含的经验值
-        public FP CurrentSpeed;  // 当前飞行速度 (用于实现加速吸附)
+        public Fixed64 CurrentSpeed;  // 当前飞行速度 (用于实现加速吸附)
     }
 }

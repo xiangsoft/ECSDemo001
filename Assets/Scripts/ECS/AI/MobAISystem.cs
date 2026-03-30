@@ -1,4 +1,4 @@
-﻿using TrueSync;
+﻿using FixedMathSharp;
 using Xiangsoft.Lib.ECS.Component;
 using Xiangsoft.Lib.ECS.System;
 using Xiangsoft.Lib.ECS.World;
@@ -12,14 +12,14 @@ namespace Xiangsoft.Lib.ECS.AI
             requireMask = (ulong)ComponentMask.AI;
         }
 
-        public override void Update(FP deltaTime)
+        public override void Update(Fixed64 deltaTime)
         {
             int playerID = ECSEngine.Instance.PlayerEntityID;
 
             if (playerID == -1)
                 return;
 
-            TSVector playerPos = world.Transforms[playerID].Position;
+            Vector3d playerPos = world.Transforms[playerID].Position;
 
             for (int i = 0; i < world.MaxAllocatedID; i++)
             {
@@ -27,9 +27,9 @@ namespace Xiangsoft.Lib.ECS.AI
                     continue;
 
                 ref AIComponent ai = ref world.AIs[i];
-                TSVector pos = world.Transforms[i].Position;
+                Vector3d pos = world.Transforms[i].Position;
 
-                FP sqrDist = (playerPos - pos).sqrMagnitude;
+                Fixed64 sqrDist = (playerPos - pos).SqrMagnitude;
 
                 if (ai.IsRanged)
                 {

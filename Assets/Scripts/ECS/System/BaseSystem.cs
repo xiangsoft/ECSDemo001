@@ -1,4 +1,4 @@
-﻿using TrueSync;
+﻿using FixedMathSharp;
 using Xiangsoft.Lib.ECS.World;
 using Xiangsoft.Lib.Interface;
 
@@ -14,7 +14,7 @@ namespace Xiangsoft.Lib.ECS.System
             this.world = world;
         }
 
-        public abstract void Update(FP deltaTime);
+        public abstract void Update(Fixed64 deltaTime);
 
         /// <summary>
         /// 判断指定的实体标识符是否与有效实体相对应。

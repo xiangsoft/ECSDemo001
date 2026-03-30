@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
-using TrueSync;
-using UnityEngine;
+﻿using FixedMathSharp;
+using System.Collections.Generic;
 using Xiangsoft.Lib.ECS.Component;
 using Xiangsoft.Lib.ECS.Grid;
 using Xiangsoft.Lib.ECS.Pool;
@@ -22,7 +21,7 @@ namespace Xiangsoft.Lib.ECS.System
             requireMask = (ulong)(ComponentMask.Transform | ComponentMask.Projectile);
         }
 
-        public override void Update(FP deltaTime)
+        public override void Update(Fixed64 deltaTime)
         {
             // 批量遍历所有实体，寻找激活的子弹
             for (int i = 0; i < world.MaxAllocatedID; i++)
@@ -39,7 +38,7 @@ namespace Xiangsoft.Lib.ECS.System
 
                 proj.LifeTimer += deltaTime;
                 // --- 1. 回旋镖轨迹控制 ---
-                if (proj.IsBoomerang && !proj.IsReturning && proj.LifeTimer >= proj.MaxLifetime / 2f)
+                if (proj.IsBoomerang && !proj.IsReturning && proj.LifeTimer >= proj.MaxLifetime / Fixed64.Two)
                 {
                     proj.IsReturning = true;
                     // 飞回阶段：清空命中记忆
@@ -50,18 +49,17 @@ namespace Xiangsoft.Lib.ECS.System
 
                 if (proj.IsReturning && world.Transforms[proj.CasterID].Transform != null)
                 {
-                    TSVector casterPos = world.Transforms[proj.CasterID].Position;
-                    TSVector returnDir = casterPos - tComp.Position;
-                    returnDir.y = 0;
+                    Vector3d casterPos = world.Transforms[proj.CasterID].Position;
+                    Vector3d returnDir = casterPos - tComp.Position;
+                    returnDir.y = Fixed64.Zero;
 
-                    if (returnDir.sqrMagnitude < 1f)
+                    if (returnDir.SqrMagnitude < Fixed64.One)
                     {
                         killProjectile(ref proj, tComp); // 回到手中，销毁
                         continue;
                     }
 
-                    
-                    proj.Direction = Vector3.Slerp(proj.Direction.ToVector(), returnDir.normalized.ToVector(), (float)deltaTime * 5f).normalized.ToTSVector();
+                    proj.Direction = Vector3d.Lerp(proj.Direction, returnDir.Normal, deltaTime * (Fixed64)5).Normal;
                 }
 
                 if (proj.LifeTimer >= proj.MaxLifetime)
@@ -73,14 +71,14 @@ namespace Xiangsoft.Lib.ECS.System
                 // --- 2. 飞行位移计算 ---
                 tComp.Position += proj.Direction * proj.Speed * deltaTime;
 
-                if (proj.Direction != TSVector.zero)
+                if (proj.Direction != Vector3d.Zero)
                 {
-                    tComp.Rotation = TSQuaternion.LookRotation(proj.Direction);
+                    tComp.Rotation = FixedQuaternion.LookRotation(proj.Direction);
                 }
 
                 // --- 3. 空间哈希防抖碰撞检测 (O(1) 极速索敌) ---
-                spatialGrid.FindNeighbors(tComp.Position.ToVector(), hitBuffer);
-                FP sqrHitRadius = proj.HitRadius * proj.HitRadius;
+                spatialGrid.FindNeighbors(tComp.Position, hitBuffer);
+                Fixed64 sqrHitRadius = proj.HitRadius * proj.HitRadius;
 
                 for (int j = 0; j < hitBuffer.Count; j++)
                 {
@@ -90,11 +88,11 @@ namespace Xiangsoft.Lib.ECS.System
                     if (targetID == proj.CasterID || world.StatsBridge[targetID] == null)
                         continue;
 
-                    TSVector offset = tComp.Position - world.Transforms[targetID].Position;
-                    offset.y = 0;
+                    Vector3d offset = tComp.Position - world.Transforms[targetID].Position;
+                    offset.y = Fixed64.Zero;
 
                     // 纯数学撞击判定！
-                    if (offset.sqrMagnitude <= sqrHitRadius)
+                    if (offset.SqrMagnitude <= sqrHitRadius)
                     {
                         // 检查是否已经打过
                         bool alreadyHit = false;

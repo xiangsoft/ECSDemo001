@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using FixedMathSharp;
+using System.Collections.Generic;
 using UnityEngine;
 using Xiangsoft.Game.Skill;
-using Xiangsoft.Lib.ECS.Attribute;
 using Xiangsoft.Lib.ECS;
+using Xiangsoft.Lib.ECS.Attribute;
 using Xiangsoft.Lib.Pathfinding;
-using TrueSync;
 
 namespace Xiangsoft.Game.Logic
 {
@@ -86,10 +86,10 @@ namespace Xiangsoft.Game.Logic
             {
                 // 向着当前路点移动
                 Vector3 moveDir = dir.normalized;
-                transform.position = Vector3.MoveTowards(transform.position, targetWaypoint, Stats.Get(FloatStat.MoveSpeed) * Time.deltaTime);
+                transform.position = Vector3.MoveTowards(transform.position, targetWaypoint, ((float)Stats.Get(FloatStat.MoveSpeed)) * Time.deltaTime);
 
                 // 平滑转向
-                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(moveDir), Stats.Get(FloatStat.RotationSpeed) * Time.deltaTime);
+                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(moveDir), ((float)Stats.Get(FloatStat.RotationSpeed)) * Time.deltaTime);
             }
         }
 
@@ -116,13 +116,13 @@ namespace Xiangsoft.Game.Logic
                 return;
 
             enemiesNearMe.Clear();
-            ECSEngine.Instance.SpatialGrid.FindNeighbors(transform.position, enemiesNearMe);
+            ECSEngine.Instance.SpatialGrid.FindNeighbors(transform.position.ToVector3d(), enemiesNearMe);
 
             if (enemiesNearMe.Count == 0)
                 return;
 
             EntityStats targetStats = null;
-            TSVector targetPos = TSVector.zero;
+            Vector3d targetPos = Vector3d.Zero;
 
             foreach (int id in enemiesNearMe)
             {

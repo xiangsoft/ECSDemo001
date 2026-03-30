@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using TrueSync;
+using FixedMathSharp;
 using UnityEngine;
 using Xiangsoft.Lib.ECS.Component;
 using Xiangsoft.Lib.ECS.Grid;
@@ -15,6 +15,7 @@ namespace Xiangsoft.Lib.ECS.System
 
         // 静态缓存池，用于寻找邻居，绝对 0 GC
         private List<int> neighborBuffer = new List<int>(64);
+        private Fixed64 minDist = new Fixed64(0.0001f);
 
         public MovementSystem(GameWorld world, FlowFieldGrid flowGrid, SpatialHashECSGrid spatialGrid) : base(world)
         {
@@ -24,34 +25,34 @@ namespace Xiangsoft.Lib.ECS.System
             requireMask = (ulong)(ComponentMask.Transform | ComponentMask.Movement);
         }
 
-        public override void Update(FP deltaTime)
+        public override void Update(Fixed64 deltaTime)
         {
-            FP time = Time.time;
+            Fixed64 time = (Fixed64)Time.time;
 
             for (int i = 0; i < world.MaxAllocatedID; i++)
             {
                 if (!isValidEntity(i))
                     continue;
 
-                TSVector currentPos = world.Transforms[i].Position;
+                Vector3d currentPos = world.Transforms[i].Position;
                 MovementComponent moveComp = world.Movements[i];
 
                 if (flowGrid.HasArrived(currentPos))
                     continue;
 
-                TSVector desiredVelocity = TSVector.zero;
+                Vector3d desiredVelocity = Vector3d.Zero;
                 AIState state = world.AIs[i].CurrentState;
 
                 if (state == AIState.Chase)
                 {
                     // 追击状态：读取流场方向
-                    TSVector2 flowDir2D = flowGrid.GetDirectionFromWorldPos(currentPos);
-                    desiredVelocity = new TSVector(flowDir2D.x, 0, flowDir2D.y);
+                    Vector2d flowDir2D = flowGrid.GetDirectionFromWorldPos(currentPos);
+                    desiredVelocity = new Vector3d(flowDir2D.x, Fixed64.Zero, flowDir2D.y);
 
-                    if (desiredVelocity != TSVector.zero)
+                    if (desiredVelocity != Vector3d.Zero)
                     {
-                        TSVector rightVector = new TSVector(-desiredVelocity.z, 0, desiredVelocity.x);
-                        FP wobble = TSMath.Sin(time * moveComp.WobbleSpeed + moveComp.RandomPhase) * moveComp.WobbleStrength;
+                        Vector3d rightVector = new Vector3d(-desiredVelocity.z, Fixed64.Zero, desiredVelocity.x);
+                        Fixed64 wobble = FixedMath.Sin(time * moveComp.WobbleSpeed + moveComp.RandomPhase) * moveComp.WobbleStrength;
                         desiredVelocity += rightVector * wobble;
                         desiredVelocity.Normalize();
                     }
@@ -59,27 +60,27 @@ namespace Xiangsoft.Lib.ECS.System
                 else if (state == AIState.Flee)
                 {
                     // 逃跑状态：无视流场，直接反向远离主角！
-                    TSVector playerPos = world.Transforms[ECSEngine.Instance.PlayerEntityID].Position;
-                    desiredVelocity = (currentPos - playerPos).normalized; // 背对主角
+                    Vector3d playerPos = world.Transforms[ECSEngine.Instance.PlayerEntityID].Position;
+                    desiredVelocity = (currentPos - playerPos).Normal; // 背对主角
                 }
                 else if (state == AIState.Attack)
                 {
                     // 攻击状态：速度为 0，原地罚站！
-                    desiredVelocity = TSVector.zero;
+                    desiredVelocity = Vector3d.Zero;
 
                     // 但是要平滑转身面向主角
-                    TSVector playerPos = world.Transforms[ECSEngine.Instance.PlayerEntityID].Position;
-                    TSVector lookDir = (playerPos - currentPos).normalized;
-                    lookDir.y = 0;
-                    if (lookDir != TSVector.zero)
+                    Vector3d playerPos = world.Transforms[ECSEngine.Instance.PlayerEntityID].Position;
+                    Vector3d lookDir = (playerPos - currentPos).Normal;
+                    lookDir.y = Fixed64.Zero;
+                    if (lookDir != Vector3d.Zero)
                     {
-                        world.Transforms[i].Rotation = TSQuaternion.Slerp(world.Transforms[i].Rotation, TSQuaternion.LookRotation(lookDir), moveComp.RotationSpeed * deltaTime);
+                        world.Transforms[i].Rotation = FixedQuaternion.Slerp(world.Transforms[i].Rotation, FixedQuaternion.LookRotation(lookDir), moveComp.RotationSpeed * deltaTime);
                     }
                 }
 
                 // 3. 计算排斥力 (需要把 SpatialHashGrid 稍作改造存储 Entity ID，这里假设它返回的是 ID 列表)
-                spatialGrid.FindNeighbors(currentPos.ToVector(), neighborBuffer);
-                TSVector separationForce = TSVector.zero;
+                spatialGrid.FindNeighbors(currentPos, neighborBuffer);
+                Vector3d separationForce = Vector3d.Zero;
 
                 for (int j = 0; j < neighborBuffer.Count; j++)
                 {
@@ -88,40 +89,40 @@ namespace Xiangsoft.Lib.ECS.System
                     if (neighborID == i)
                         continue;
 
-                    TSVector dirAway = currentPos - world.Transforms[neighborID].Position;
-                    dirAway.y = 0;
+                    Vector3d dirAway = currentPos - world.Transforms[neighborID].Position;
+                    dirAway.y = Fixed64.Zero;
 
-                    FP sqrDist = dirAway.sqrMagnitude;
-                    FP sepRadius = moveComp.SeparationRadius;
-                    if (sqrDist < sepRadius * sepRadius && sqrDist > 0.0001f)
+                    Fixed64 sqrDist = dirAway.SqrMagnitude;
+                    Fixed64 sepRadius = moveComp.SeparationRadius;
+                    if (sqrDist < sepRadius * sepRadius && sqrDist > minDist)
                     {
-                        FP dist = TSMath.Sqrt(sqrDist);
-                        FP force = 1f - (dist / sepRadius);
+                        Fixed64 dist = FixedMath.Sqrt(sqrDist);
+                        Fixed64 force = 1f - (dist / sepRadius);
                         separationForce += (dirAway / dist) * force;
                     }
                 }
 
-                TSVector finalDirection = (desiredVelocity + separationForce * moveComp.SeparationWeight).normalized;
+                Vector3d finalDirection = (desiredVelocity + separationForce * moveComp.SeparationWeight).Normal;
 
                 // 4. 分轴移动与防穿墙计算
-                if (finalDirection == TSVector.zero)
+                if (finalDirection == Vector3d.Zero)
                     continue;
 
-                TSVector moveDelta = finalDirection * moveComp.MoveSpeed * deltaTime;
+                Vector3d moveDelta = finalDirection * moveComp.MoveSpeed * deltaTime;
 
-                TSVector nextPosX = currentPos + new TSVector(moveDelta.x, 0, 0);
+                Vector3d nextPosX = currentPos + new Vector3d(moveDelta.x, Fixed64.Zero, Fixed64.Zero);
                 if (flowGrid.IsWalkable(nextPosX))
                     currentPos.x = nextPosX.x;
 
-                TSVector nextPosZ = currentPos + new TSVector(0, 0, moveDelta.z);
+                Vector3d nextPosZ = currentPos + new Vector3d(Fixed64.Zero, Fixed64.Zero, moveDelta.z);
                 if (flowGrid.IsWalkable(nextPosZ))
                     currentPos.z = nextPosZ.z;
 
                 // 将计算好的结果写回数据
                 world.Transforms[i].Position = currentPos;
-                world.Transforms[i].Rotation = TSQuaternion.Slerp(
+                world.Transforms[i].Rotation = FixedQuaternion.Slerp(
                     world.Transforms[i].Rotation,
-                    TSQuaternion.LookRotation(finalDirection),
+                    FixedQuaternion.LookRotation(finalDirection),
                     moveComp.RotationSpeed * deltaTime
                 );
             }

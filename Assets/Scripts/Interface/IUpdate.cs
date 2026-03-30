@@ -1,4 +1,4 @@
-﻿using TrueSync;
+﻿using FixedMathSharp;
 
 namespace Xiangsoft.Lib.Interface
 {
@@ -8,7 +8,7 @@ namespace Xiangsoft.Lib.Interface
         /// 每帧调用一次，执行对象的更新逻辑。
         /// </summary>
         /// <param name="deltaTime"></param>
-        void Update(FP deltaTime);
+        void Update(Fixed64 deltaTime);
     }
 
     public interface ILateUpdate
@@ -17,7 +17,7 @@ namespace Xiangsoft.Lib.Interface
         /// 每帧调用一次，执行Update更新逻辑之后调用。
         /// </summary>
         /// <param name="deltaTime"></param>
-        void LateUpdate(FP deltaTime);
+        void LateUpdate(Fixed64 deltaTime);
     }
 
     public interface IFixedUpdate
@@ -26,6 +26,6 @@ namespace Xiangsoft.Lib.Interface
         /// 按固定时间间隔执行逻辑，通常用于物理更新。
         /// </summary>
         /// <param name="fixedDeltaTime">自上次修复更新以来经过的时间（秒）。</param>
-        void FixedUpdate(FP fixedDeltaTime);
+        void FixedUpdate(Fixed64 fixedDeltaTime);
     }
 }

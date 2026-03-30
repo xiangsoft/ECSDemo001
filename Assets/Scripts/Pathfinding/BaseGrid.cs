@@ -1,4 +1,4 @@
-using TrueSync;
+using FixedMathSharp;
 using UnityEngine;
 
 namespace Xiangsoft.Lib.Pathfinding
@@ -63,11 +63,11 @@ namespace Xiangsoft.Lib.Pathfinding
 
                     Cells[index] = new Cell
                     {
-                        WorldPosition = worldPosition.ToTSVector(),
-                        GridPosition = new TSVector2(x, y),
+                        WorldPosition = worldPosition.ToVector3d(),
+                        GridPosition = new Vector2d(x, y),
                         Cost = cost,
                         BestCost = uint.MaxValue,
-                        BestDirection = TSVector2.zero,
+                        BestDirection = Vector2d.Zero,
                         AvailableDirections = getNeighborDirections(x, y)
                     };
                 }

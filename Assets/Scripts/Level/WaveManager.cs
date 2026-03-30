@@ -1,4 +1,4 @@
-﻿using TrueSync;
+﻿using FixedMathSharp;
 using UnityEngine;
 using Xiangsoft.Lib.ECS;
 using Xiangsoft.Lib.ECS.Authoring;
@@ -80,7 +80,6 @@ namespace Xiangsoft.Game.Level
                 return;
             }
 
-            TSRandom.instance = TSRandom.New(19890817);
             IsPlaying = true;
 
             foreach (var wave in CurrentLevelData.Waves)
@@ -95,11 +94,11 @@ namespace Xiangsoft.Game.Level
         private void spawnEnemy(WaveEvent wave)
         {
             // 在主角周围随机生成一个圆环坐标 (屏幕外盲区)
-            TSVector2 randomCircle = insideUnitCircle().normalized * TSRandom.Range(MinSpawnRadius, MaxSpawnRadius);
-            TSVector spawnPos = PlayerTransform.position.ToTSVector() + new TSVector(randomCircle.x, 0, randomCircle.y);
+            Vector2d randomCircle = insideUnitCircle().Normal * RandomManager.Instance.Range((Fixed64)MinSpawnRadius, (Fixed64)MaxSpawnRadius);
+            Vector3d spawnPos = PlayerTransform.position.ToVector3d() + new Vector3d(randomCircle.x, Fixed64.Zero, randomCircle.y);
 
             // 从对象池拿到怪物
-            EntityAuthoring enemy = UnitPool.Instance.Get(wave.EnemyPrefab, spawnPos, TSQuaternion.identity);
+            EntityAuthoring enemy = UnitPool.Instance.Get(wave.EnemyPrefab, spawnPos, FixedQuaternion.Identity);
 
             // 记录存活
             wave.AliveEntities.Add(enemy.GetEntityID());
@@ -112,11 +111,11 @@ namespace Xiangsoft.Game.Level
             }
         }
 
-        private TSVector2 insideUnitCircle()
+        private Vector2d insideUnitCircle()
         {
-            FP angle = TSRandom.value * TSMath.Pi * 2f;
-            FP r = TSMath.Sqrt(TSRandom.value); // 取平方根保证在圆内均匀分布
-            return new TSVector2(r * TSMath.Cos(angle), r * TSMath.Sin(angle));
+            Fixed64 angle = RandomManager.Instance.Value * FixedMath.PI * Fixed64.Two;
+            Fixed64 r = FixedMath.Sqrt(RandomManager.Instance.Value); // 取平方根保证在圆内均匀分布
+            return new Vector2d(r * FixedMath.Cos(angle), r * FixedMath.Sin(angle));
         }
     }
 }

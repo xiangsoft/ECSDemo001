@@ -1,7 +1,7 @@
-﻿using System;
+﻿using FixedMathSharp;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using TrueSync;
 
 namespace Xiangsoft.Lib.LockStep
 {
@@ -11,10 +11,10 @@ namespace Xiangsoft.Lib.LockStep
 
         [Header("网络帧同步设置")]
         public int LogicFrameRate = 30; // 逻辑帧率：每秒跑30次 ECS Update
-        private FP logicTickTime;    // 每帧间隔 (1.0 / 30 = 0.0333f)
-        private FP accumulator = 0f; // 时间累加器
+        private Fixed64 logicTickTime;    // 每帧间隔 (1.0 / 30 = 0.0333f)
+        private Fixed64 accumulator = Fixed64.Zero; // 时间累加器
         public int CurrentLogicFrame { get; private set; } // 当前跑到了第几帧
-        private List<Action<FP>> logicUpdates = null;
+        private List<Action<Fixed64>> logicUpdates = null;
         public bool StartLogic { get; set; }
 
         private void Awake()
@@ -24,8 +24,8 @@ namespace Xiangsoft.Lib.LockStep
 
             Application.targetFrameRate = LogicFrameRate; // 固定渲染帧率，防止过高或过低
             CurrentLogicFrame = 0;
-            logicTickTime = 1f / LogicFrameRate;
-            logicUpdates = new List<Action<FP>>();
+            logicTickTime = Fixed64.One / (Fixed64)LogicFrameRate;
+            logicUpdates = new List<Action<Fixed64>>();
         }
 
         private void Update()
@@ -33,11 +33,11 @@ namespace Xiangsoft.Lib.LockStep
             if(!StartLogic)
                 return;
             
-            accumulator += Time.deltaTime;
+            accumulator += (Fixed64)Time.deltaTime;
 
             while (accumulator >= logicTickTime)
             {
-                foreach (Action<FP> logicUpdate in logicUpdates)
+                foreach (Action<Fixed64> logicUpdate in logicUpdates)
                 {
                     logicUpdate.Invoke(logicTickTime);
                 }
@@ -47,7 +47,7 @@ namespace Xiangsoft.Lib.LockStep
             }
         }
 
-        public void RegisterLogicUpdate(Action<FP> logicUpdate)
+        public void RegisterLogicUpdate(Action<Fixed64> logicUpdate)
         {
             if (logicUpdates.Contains(logicUpdate))
                 return;
@@ -55,7 +55,7 @@ namespace Xiangsoft.Lib.LockStep
             logicUpdates.Add(logicUpdate);
         }
 
-        public void UnregisterLogicUpdate(Action<FP> logicUpdate)
+        public void UnregisterLogicUpdate(Action<Fixed64> logicUpdate)
         {
             if (!logicUpdates.Contains(logicUpdate))
                 return;

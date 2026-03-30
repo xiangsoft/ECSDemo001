@@ -1,4 +1,4 @@
-﻿using TrueSync;
+﻿using FixedMathSharp;
 
 namespace Xiangsoft.Lib.ECS.Component
 {
@@ -22,11 +22,11 @@ namespace Xiangsoft.Lib.ECS.Component
         /// <summary>
         /// 进入攻击状态的距离
         /// </summary>
-        public FP AttackRange;
+        public Fixed64 AttackRange;
 
         /// <summary>
         /// 触发逃跑的距离 (贴脸距离)
         /// </summary>
-        public FP FleeRange;
+        public Fixed64 FleeRange;
     }
 }

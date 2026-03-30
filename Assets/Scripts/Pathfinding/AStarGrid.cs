@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using TrueSync;
+﻿using FixedMathSharp;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Xiangsoft.Lib.Pathfinding
@@ -154,7 +154,7 @@ namespace Xiangsoft.Lib.Pathfinding
             int currentNode = endNode;
             while (currentNode != startNode)
             {
-                path.Add(BaseGrid.Instance.Cells[currentNode].WorldPosition.ToVector());
+                path.Add(BaseGrid.Instance.Cells[currentNode].WorldPosition.ToVector3());
                 currentNode = parent[currentNode];
             }
             // 因为是从终点往回追溯的，所以需要把列表翻转过来

@@ -1,4 +1,4 @@
-﻿using TrueSync;
+﻿using FixedMathSharp;
 
 namespace Xiangsoft.Lib.Pathfinding
 {
@@ -7,12 +7,12 @@ namespace Xiangsoft.Lib.Pathfinding
         /// <summary>
         /// 世界坐标
         /// </summary>
-        public TSVector WorldPosition;
+        public Vector3d WorldPosition;
 
         /// <summary>
         /// 格子坐标
         /// </summary>
-        public TSVector2 GridPosition;
+        public Vector2d GridPosition;
 
         /// <summary>
         /// 代价
@@ -27,7 +27,7 @@ namespace Xiangsoft.Lib.Pathfinding
         /// <summary>
         /// 流场方向
         /// </summary>
-        public TSVector2 BestDirection;
+        public Vector2d BestDirection;
 
         /// <summary>
         /// 允许的邻居方向

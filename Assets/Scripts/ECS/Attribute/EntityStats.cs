@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FixedMathSharp;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Xiangsoft.Game.UI;
@@ -15,8 +16,8 @@ namespace Xiangsoft.Lib.ECS.Attribute
 
         // --- 运行时的 0 GC 高性能字典 ---
         // 浮点型
-        private Dictionary<FloatStat, float> baseFloatStats = new Dictionary<FloatStat, float>();
-        private Dictionary<FloatStat, float> currentFloatStats = new Dictionary<FloatStat, float>();
+        private Dictionary<FloatStat, Fixed64> baseFloatStats = new Dictionary<FloatStat, Fixed64>();
+        private Dictionary<FloatStat, Fixed64> currentFloatStats = new Dictionary<FloatStat, Fixed64>();
         // 整型
         private Dictionary<IntStat, int> baseIntStats = new Dictionary<IntStat, int>();
         private Dictionary<IntStat, int> currentIntStats = new Dictionary<IntStat, int>();
@@ -46,22 +47,26 @@ namespace Xiangsoft.Lib.ECS.Attribute
         {
             foreach (var config in initialFloatStats)
             {
-                baseFloatStats[config.Type] = config.BaseValue; currentFloatStats[config.Type] = config.BaseValue;
+                baseFloatStats[config.Type] = (Fixed64)config.BaseValue; 
+                currentFloatStats[config.Type] = (Fixed64)config.BaseValue;
             }
 
             foreach (var config in initialIntStats)
             {
-                baseIntStats[config.Type] = config.BaseValue; currentIntStats[config.Type] = config.BaseValue;
+                baseIntStats[config.Type] = config.BaseValue; 
+                currentIntStats[config.Type] = config.BaseValue;
             }
 
             foreach (var config in initialLongStats)
             {
-                baseLongStats[config.Type] = config.BaseValue; currentLongStats[config.Type] = config.BaseValue;
+                baseLongStats[config.Type] = config.BaseValue; 
+                currentLongStats[config.Type] = config.BaseValue;
             }
 
             foreach (var config in initialStringStats)
             {
-                baseStringStats[config.Type] = config.BaseValue; currentStringStats[config.Type] = config.BaseValue;
+                baseStringStats[config.Type] = config.BaseValue; 
+                currentStringStats[config.Type] = config.BaseValue;
             }
         }
 
@@ -84,9 +89,9 @@ namespace Xiangsoft.Lib.ECS.Attribute
             currentIntStats[IntStat.CurrentHealth] = GetBase(IntStat.MaxHealth);
         }
 
-        public float Get(FloatStat type)
+        public Fixed64 Get(FloatStat type)
         {
-            return currentFloatStats.TryGetValue(type, out float val) ? val : 0f;
+            return currentFloatStats.TryGetValue(type, out Fixed64 val) ? val : (Fixed64)0;
         }
 
         public int Get(IntStat type)
@@ -104,9 +109,9 @@ namespace Xiangsoft.Lib.ECS.Attribute
             return baseStringStats.TryGetValue(type, out string val) ? val : string.Empty;
         }
 
-        public float GetBase(FloatStat type)
+        public Fixed64 GetBase(FloatStat type)
         {
-            return baseFloatStats.TryGetValue(type, out float val) ? val : 0f;
+            return baseFloatStats.TryGetValue(type, out Fixed64 val) ? val : (Fixed64)0;
         }
 
         public int GetBase(IntStat type)
@@ -124,7 +129,7 @@ namespace Xiangsoft.Lib.ECS.Attribute
             return baseStringStats.TryGetValue(type, out string val) ? val : string.Empty;
         }
 
-        public void Set(FloatStat type, float value)
+        public void Set(FloatStat type, Fixed64 value)
         {
             currentFloatStats[type] = value;
         }
@@ -182,7 +187,7 @@ namespace Xiangsoft.Lib.ECS.Attribute
             if (DamageTextManager.Instance == null)
                 return;
 
-            DamageTextManager.Instance.ShowDamage(actualDamage, transform.position.ToTSVector(), isCrit);
+            DamageTextManager.Instance.ShowDamage(actualDamage, transform.position.ToVector3d(), isCrit);
         }
 
         private void die()

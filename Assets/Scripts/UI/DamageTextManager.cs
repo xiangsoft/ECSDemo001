@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using FixedMathSharp;
+using System.Collections.Generic;
 using TMPro;
-using TrueSync;
 using UnityEngine;
 
 namespace Xiangsoft.Game.UI
@@ -11,8 +11,8 @@ namespace Xiangsoft.Game.UI
 
         [Header("配置")]
         public TextMeshPro textPrefab;
-        public FP floatSpeed = 2f;    // 向上漂移的速度
-        public FP lifetime = 1f;      // 显示时长
+        public Fixed64 floatSpeed = Fixed64.Two;    // 向上漂移的速度
+        public Fixed64 lifetime = Fixed64.One;      // 显示时长
 
         /// <summary>
         /// 纯数据驱动的结构体（紧凑内存，极速遍历）
@@ -20,8 +20,8 @@ namespace Xiangsoft.Game.UI
         private struct DamageTextData
         {
             public TextMeshPro TextComponent;
-            public TSVector CurrentPos;
-            public FP LifeTimer;
+            public Vector3d CurrentPos;
+            public Fixed64 LifeTimer;
             public Color CurrentColor;
         }
 
@@ -53,7 +53,7 @@ namespace Xiangsoft.Game.UI
             if (activeCount == 0)
                 return;
 
-            float dt = Time.deltaTime;
+            Fixed64 dt = (Fixed64)Time.deltaTime;
             Quaternion camRotation = mainCamera.transform.rotation;
 
             // 倒序遍历，方便删除
@@ -77,13 +77,13 @@ namespace Xiangsoft.Game.UI
 
                 // 向上漂移
                 data.CurrentPos.y += floatSpeed * dt;
-                data.TextComponent.transform.position = data.CurrentPos.ToVector();
+                data.TextComponent.transform.position = data.CurrentPos.ToVector3();
 
                 // 始终面向摄像机 (Billboard 效果)
                 data.TextComponent.transform.rotation = camRotation;
 
                 // 渐渐透明
-                FP alpha = 1f - (data.LifeTimer / lifetime);
+                Fixed64 alpha = 1f - (data.LifeTimer / lifetime);
                 data.CurrentColor.a = (float)alpha;
                 data.TextComponent.color = data.CurrentColor;
             }
@@ -97,7 +97,7 @@ namespace Xiangsoft.Game.UI
             return tmp;
         }
 
-        public void ShowDamage(int damage, TSVector position, bool isCrit = false)
+        public void ShowDamage(int damage, Vector3d position, bool isCrit = false)
         {
             if (activeCount >= activeTexts.Length)
                 return; // 超过上限直接丢弃（玩家根本看不清那么多）
@@ -106,8 +106,8 @@ namespace Xiangsoft.Game.UI
             tmp.gameObject.SetActive(true);
 
             // 稍微随机偏移一点，防止数字完全叠在一起
-            TSVector randomOffset = new TSVector(TSRandom.Range(-0.5f, 0.5f), 1f, TSRandom.Range(-0.5f, 0.5f));
-            TSVector startPos = position + randomOffset;
+            Vector3d randomOffset = new Vector3d(Random.Range(-0.5f, 0.5f), 1f, Random.Range(-0.5f, 0.5f));
+            Vector3d startPos = position + randomOffset;
 
             tmp.text = damage.ToString();
             tmp.color = isCrit ? Color.red : Color.white; // 暴击红字，普通白字
@@ -118,7 +118,7 @@ namespace Xiangsoft.Game.UI
             {
                 TextComponent = tmp,
                 CurrentPos = startPos,
-                LifeTimer = 0f,
+                LifeTimer = Fixed64.Zero,
                 CurrentColor = tmp.color
             };
             activeCount++;

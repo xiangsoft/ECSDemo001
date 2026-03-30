@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
+using Xiangsoft.Game.Level;
 using Xiangsoft.Game.Skill;
 using Xiangsoft.Lib.ECS.Attribute;
 using Xiangsoft.Lib.ECS.Component;
 using Xiangsoft.Lib.ECS.Pool;
-using Xiangsoft.Lib.ECS.Spawner;
 
 namespace Xiangsoft.Lib.ECS.Authoring
 {
@@ -85,7 +85,7 @@ namespace Xiangsoft.Lib.ECS.Authoring
             if (IsPlayer)
             {
                 ECSEngine.Instance.PlayerEntityID = entity.ID;
-                UnitECSSpawner.Instance.IsPlayerInitOK = true;
+                WaveManager.Instance.StartGame();
             }
 
             ECSEngine.Instance.World.EntityMasks[entity.ID] = comMask;

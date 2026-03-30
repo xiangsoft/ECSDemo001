@@ -96,7 +96,7 @@ GameObject:
   - component: {fileID: 1739082258111789708}
   - component: {fileID: 1300669076554622078}
   m_Layer: 0
-  m_Name: UnitECS01
+  m_Name: Unit001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

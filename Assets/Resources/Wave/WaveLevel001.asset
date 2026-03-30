@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfe2d056c8654a244968ed14ab99b362, type: 3}
+  m_Name: WaveLevel001
+  m_EditorClassIdentifier: 
+  LevelName: "\u7B2C\u4E00\u5173\uFF1A\u65E0\u5C3D\u5E73\u539F"
+  Waves:
+  - StartTime: 0
+    EnemyPrefab: {fileID: 1300669076554622078, guid: 52448ac284bd4e845ac1072faaeba4c6, type: 3}
+    TotalToSpawn: 10
+    SpawnInterval: 0.3
+    MaxAliveAtSameTime: 500
+    SpawnedCount: 0
+    SpawnTimer: 0
+    IsFinished: 0
+    AliveEntities: 
+  - StartTime: 5
+    EnemyPrefab: {fileID: 1300669076554622078, guid: 52448ac284bd4e845ac1072faaeba4c6, type: 3}
+    TotalToSpawn: 20
+    SpawnInterval: 0.3
+    MaxAliveAtSameTime: 500
+    SpawnedCount: 0
+    SpawnTimer: 0
+    IsFinished: 0
+    AliveEntities: 
+  - StartTime: 10
+    EnemyPrefab: {fileID: 1300669076554622078, guid: 52448ac284bd4e845ac1072faaeba4c6, type: 3}
+    TotalToSpawn: 40
+    SpawnInterval: 0.3
+    MaxAliveAtSameTime: 500
+    SpawnedCount: 0
+    SpawnTimer: 0
+    IsFinished: 0
+    AliveEntities: 
+  - StartTime: 15
+    EnemyPrefab: {fileID: 1300669076554622078, guid: 52448ac284bd4e845ac1072faaeba4c6, type: 3}
+    TotalToSpawn: 80
+    SpawnInterval: 0.2
+    MaxAliveAtSameTime: 500
+    SpawnedCount: 0
+    SpawnTimer: 0
+    IsFinished: 0
+    AliveEntities: 
+  - StartTime: 20
+    EnemyPrefab: {fileID: 1300669076554622078, guid: 52448ac284bd4e845ac1072faaeba4c6, type: 3}
+    TotalToSpawn: 200
+    SpawnInterval: 0.1
+    MaxAliveAtSameTime: 500
+    SpawnedCount: 0
+    SpawnTimer: 0
+    IsFinished: 0
+    AliveEntities: 

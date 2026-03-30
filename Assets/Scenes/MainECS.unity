@@ -1240,6 +1240,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b653aece278685d44b7e8b6a89e2eedd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CurrentLevelData: {fileID: 11400000, guid: ee122c2a08682774ea0a1dc9d855e5d3, type: 2}
+  PlayerTransform: {fileID: 329258975}
+  MinSpawnRadius: 15
+  MaxSpawnRadius: 25
 --- !u!1 &1749808987
 GameObject:
   m_ObjectHideFlags: 0

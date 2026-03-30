@@ -4,6 +4,7 @@ using Xiangsoft.Game.Skill;
 using Xiangsoft.Lib.ECS.Attribute;
 using Xiangsoft.Lib.ECS;
 using Xiangsoft.Lib.Pathfinding;
+using TrueSync;
 
 namespace Xiangsoft.Game.Logic
 {
@@ -121,7 +122,7 @@ namespace Xiangsoft.Game.Logic
                 return;
 
             EntityStats targetStats = null;
-            Vector3 targetPos = Vector3.zero;
+            TSVector targetPos = TSVector.zero;
 
             foreach (int id in enemiesNearMe)
             {

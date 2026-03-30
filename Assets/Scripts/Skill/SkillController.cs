@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using TrueSync;
 using UnityEngine;
 using Xiangsoft.Lib.ECS.Attribute;
 
@@ -49,7 +50,7 @@ namespace Xiangsoft.Game.Skill
             }
         }
 
-        public void TryCastAll(EntityStats target = null, Vector3 targetPos = default)
+        public void TryCastAll(EntityStats target = null, TSVector targetPos = default)
         {
             for (int i = 0; i < skills.Count; i++)
             {
@@ -57,7 +58,7 @@ namespace Xiangsoft.Game.Skill
             }
         }
 
-        public bool TryCastSkill(int skillIndex, EntityStats target = null, Vector3 targetPos = default)
+        public bool TryCastSkill(int skillIndex, EntityStats target = null, TSVector targetPos = default)
         {
             if (skillIndex < 0 || skillIndex >= skills.Count)
                 return false;
@@ -74,7 +75,7 @@ namespace Xiangsoft.Game.Skill
             {
                 Caster = GetComponent<EntityStats>(),
                 Target = target,
-                TargetPosition = targetPos == default ? transform.position : targetPos
+                TargetPosition = targetPos == default ? transform.position.ToTSVector() : targetPos
             };
 
             foreach (SkillEffect effect in skill.Data.Effects)

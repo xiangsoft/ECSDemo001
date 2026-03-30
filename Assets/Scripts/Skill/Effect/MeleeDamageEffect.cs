@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using TrueSync;
+using UnityEngine;
 using Xiangsoft.Lib.ECS.Attribute;
 using Xiangsoft.Lib.LockStep;
 
@@ -19,7 +20,7 @@ namespace Xiangsoft.Game.Skill
             // 如果策划没配倍率，默认给 2.0 倍
             float critMult = context.Caster.Get(FloatStat.CritMultiplier) <= 0f ? 2.0f : context.Caster.Get(FloatStat.CritMultiplier);
 
-            bool isCrit = DeterministicRandom.value < critRate;
+            bool isCrit = TSRandom.value < critRate;
 
             // 获取施法者的攻击力
             int casterAttack = context.Caster.Get(IntStat.Attack);

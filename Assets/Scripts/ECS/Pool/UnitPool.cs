@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using TrueSync;
 using UnityEngine;
 using Xiangsoft.Lib.ECS.Attribute;
 using Xiangsoft.Lib.ECS.Authoring;
@@ -27,8 +28,10 @@ namespace Xiangsoft.Lib.ECS.Pool
 
         private void Awake()
         {
-            if (Instance == null) Instance = this;
-            else Destroy(gameObject);
+            if (Instance == null)
+                Instance = this;
+            else
+                Destroy(gameObject);
 
             poolRoot = new GameObject("UnitPool_Root").transform;
 
@@ -59,7 +62,7 @@ namespace Xiangsoft.Lib.ECS.Pool
         }
 
         // 外部调用：从池子里拿一个兵
-        public EntityAuthoring Get(EntityAuthoring prefab, Vector3 position, Quaternion rotation)
+        public EntityAuthoring Get(EntityAuthoring prefab, TSVector position, TSQuaternion rotation)
         {
             int key = prefab.gameObject.GetInstanceID();
 
@@ -82,8 +85,8 @@ namespace Xiangsoft.Lib.ECS.Pool
                 unit = poolDictionary[key].Dequeue();
             }
 
-            unit.transform.position = position;
-            unit.transform.rotation = rotation;
+            unit.transform.position = position.ToVector();
+            unit.transform.rotation = rotation.ToQuaternion();
 
             unit.GetComponent<EntityStats>().ResetStats();
             unit.gameObject.SetActive(true);

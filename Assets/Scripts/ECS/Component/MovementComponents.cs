@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using TrueSync;
+using UnityEngine;
 
 namespace Xiangsoft.Lib.ECS.Component
 {
@@ -21,8 +22,8 @@ namespace Xiangsoft.Lib.ECS.Component
         // 为什么这里用 class？因为我们需要持有 Unity 的 Transform 引用来更新画面
         // 纯数据逻辑中我们只读写 Position 和 Rotation，最后由专门的系统同步给 Transform
         public Transform Transform;
-        public Vector3 Position;
-        public Quaternion Rotation;
+        public TSVector Position;
+        public TSQuaternion Rotation;
     }
 
     /// <summary>
@@ -30,12 +31,12 @@ namespace Xiangsoft.Lib.ECS.Component
     /// </summary>
     public struct MovementComponent
     {
-        public float MoveSpeed;
-        public float RotationSpeed;
-        public float SeparationRadius;
-        public float SeparationWeight;
-        public float WobbleSpeed;
-        public float WobbleStrength;
-        public float RandomPhase;
+        public FP MoveSpeed;
+        public FP RotationSpeed;
+        public FP SeparationRadius;
+        public FP SeparationWeight;
+        public FP WobbleSpeed;
+        public FP WobbleStrength;
+        public FP RandomPhase;
     }
 }

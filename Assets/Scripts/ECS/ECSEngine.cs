@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using TrueSync;
 using UnityEngine;
 using Xiangsoft.Lib.ECS.AI;
 using Xiangsoft.Lib.ECS.Component;
@@ -64,7 +65,7 @@ namespace Xiangsoft.Lib.ECS
             TimeManager.Instance.StartLogic = true;
         }
 
-        private void logicUpdate(float logicTickTime)
+        private void logicUpdate(FP logicTickTime)
         {
             if (World.ActiveEntityCount == 0)
                 return;
@@ -85,8 +86,8 @@ namespace Xiangsoft.Lib.ECS
                 if (World.EntityMasks[i] == (ulong)ComponentMask.None)
                     continue;
 
-                Vector3 pos = World.Transforms[i].Position;
-                SpatialGrid.Insert(i, pos);
+                TSVector pos = World.Transforms[i].Position;
+                SpatialGrid.Insert(i, pos.ToVector());
             }
         }
     }

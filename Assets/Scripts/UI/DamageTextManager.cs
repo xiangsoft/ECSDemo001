@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using TMPro;
+using TrueSync;
 using UnityEngine;
-using Xiangsoft.Lib.LockStep;
 
 namespace Xiangsoft.Game.UI
 {
@@ -11,8 +11,8 @@ namespace Xiangsoft.Game.UI
 
         [Header("配置")]
         public TextMeshPro textPrefab;
-        public float floatSpeed = 2f;    // 向上漂移的速度
-        public float lifetime = 1f;      // 显示时长
+        public FP floatSpeed = 2f;    // 向上漂移的速度
+        public FP lifetime = 1f;      // 显示时长
 
         /// <summary>
         /// 纯数据驱动的结构体（紧凑内存，极速遍历）
@@ -20,8 +20,8 @@ namespace Xiangsoft.Game.UI
         private struct DamageTextData
         {
             public TextMeshPro TextComponent;
-            public Vector3 CurrentPos;
-            public float LifeTimer;
+            public TSVector CurrentPos;
+            public FP LifeTimer;
             public Color CurrentColor;
         }
 
@@ -77,14 +77,14 @@ namespace Xiangsoft.Game.UI
 
                 // 向上漂移
                 data.CurrentPos.y += floatSpeed * dt;
-                data.TextComponent.transform.position = data.CurrentPos;
+                data.TextComponent.transform.position = data.CurrentPos.ToVector();
 
                 // 始终面向摄像机 (Billboard 效果)
                 data.TextComponent.transform.rotation = camRotation;
 
                 // 渐渐透明
-                float alpha = 1f - (data.LifeTimer / lifetime);
-                data.CurrentColor.a = alpha;
+                FP alpha = 1f - (data.LifeTimer / lifetime);
+                data.CurrentColor.a = (float)alpha;
                 data.TextComponent.color = data.CurrentColor;
             }
         }
@@ -97,7 +97,7 @@ namespace Xiangsoft.Game.UI
             return tmp;
         }
 
-        public void ShowDamage(int damage, Vector3 position, bool isCrit = false)
+        public void ShowDamage(int damage, TSVector position, bool isCrit = false)
         {
             if (activeCount >= activeTexts.Length)
                 return; // 超过上限直接丢弃（玩家根本看不清那么多）
@@ -106,8 +106,8 @@ namespace Xiangsoft.Game.UI
             tmp.gameObject.SetActive(true);
 
             // 稍微随机偏移一点，防止数字完全叠在一起
-            Vector3 randomOffset = new Vector3(DeterministicRandom.Range(-0.5f, 0.5f), 1f, DeterministicRandom.Range(-0.5f, 0.5f));
-            Vector3 startPos = position + randomOffset;
+            TSVector randomOffset = new TSVector(TSRandom.Range(-0.5f, 0.5f), 1f, TSRandom.Range(-0.5f, 0.5f));
+            TSVector startPos = position + randomOffset;
 
             tmp.text = damage.ToString();
             tmp.color = isCrit ? Color.red : Color.white; // 暴击红字，普通白字

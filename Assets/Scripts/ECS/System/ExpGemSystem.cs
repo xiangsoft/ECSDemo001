@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿using TrueSync;
 using Xiangsoft.Lib.ECS.Attribute;
 using Xiangsoft.Lib.ECS.Component;
 using Xiangsoft.Lib.ECS.Pool;
@@ -9,36 +9,36 @@ namespace Xiangsoft.Lib.ECS.System
     public class ExpGemSystem : BaseSystem
     {
         // 策划配置项 (实际项目中可以提出来放到 ECSEngine 或主角属性里)
-        private const float MAGNETIC_RADIUS_SQR = 3.5f * 3.5f; // 磁吸触发半径的平方
-        private const float COLLECT_RADIUS_SQR = 0.5f * 0.5f;  // 吃到经验的判定半径平方
-        private const float ACCELERATION = 20f;                // 磁吸时的加速度
+        private static readonly FP MAGNETIC_RADIUS_SQR = FP.FromFloat(3.5f * 3.5f); // 磁吸触发半径的平方
+        private static readonly FP COLLECT_RADIUS_SQR = FP.FromFloat(0.5f * 0.5f);  // 吃到经验的判定半径平方
+        private static readonly FP ACCELERATION = FP.FromFloat(20f);                // 磁吸时的加速度
 
-        public ExpGemSystem(GameWorld world): base(world)
+        public ExpGemSystem(GameWorld world) : base(world)
         {
             requireMask = (ulong)(ComponentMask.Transform | ComponentMask.ExpGem);
         }
 
-        public override void Update(float deltaTime)
+        public override void Update(FP deltaTime)
         {
             int playerID = ECSEngine.Instance.PlayerEntityID;
             if (playerID == -1)
                 return;
 
-            Vector3 playerPos = world.Transforms[playerID].Position;
+            TSVector playerPos = world.Transforms[playerID].Position;
             EntityStats playerStats = world.StatsBridge[playerID];
 
             for (int i = 0; i < world.MaxAllocatedID; i++)
             {
-                if (!isValidEntity(i)) 
+                if (!isValidEntity(i))
                     continue;
 
                 ref ExpGemComponent gem = ref world.ExpGems[i];
                 TransformComponent tComp = world.Transforms[i];
 
-                Vector3 gemPos = tComp.Position;
-                Vector3 offset = playerPos - gemPos;
+                TSVector gemPos = tComp.Position;
+                TSVector offset = playerPos - gemPos;
                 offset.y = 0;
-                float sqrDist = offset.sqrMagnitude;
+                FP sqrDist = offset.sqrMagnitude;
 
                 if (gem.State == ExpGemState.Idle)
                 {
@@ -64,7 +64,7 @@ namespace Xiangsoft.Lib.ECS.System
 
                     // 加速飞行算法
                     gem.CurrentSpeed += ACCELERATION * deltaTime;
-                    Vector3 moveDir = offset.normalized;
+                    TSVector moveDir = offset.normalized;
                     tComp.Position += moveDir * gem.CurrentSpeed * deltaTime;
                 }
             }

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using TrueSync;
+using UnityEngine;
 using Xiangsoft.Game.Level;
 using Xiangsoft.Game.Skill;
 using Xiangsoft.Lib.ECS.Attribute;
@@ -18,8 +19,8 @@ namespace Xiangsoft.Lib.ECS.Authoring
 
         [Header("AI 配置")]
         public bool isRangedMob = false;
-        public float attackRange = 1.5f;
-        public float fleeRange = 0f; // 如果不是远程怪，就设为 0
+        public FP attackRange = 1.5f;
+        public FP fleeRange = 0f; // 如果不是远程怪，就设为 0
 
         protected override void OnLoad()
         {
@@ -35,8 +36,8 @@ namespace Xiangsoft.Lib.ECS.Authoring
             {
                 // 主角在 OOP 里移动了，我们要把坐标同步给 ECS，这样 ECS 里的子弹和怪物才能找到主角
                 TransformComponent tComp = ECSEngine.Instance.World.Transforms[entity.ID];
-                tComp.Position = transform.position;
-                tComp.Rotation = transform.rotation;
+                tComp.Position = transform.position.ToTSVector();
+                tComp.Rotation = transform.rotation.ToTSQuaternion();
             }
         }
 
@@ -54,8 +55,8 @@ namespace Xiangsoft.Lib.ECS.Authoring
             // 2. 将 Unity 的 Transform 引用和初始坐标填入 ECS 数组
             TransformComponent tComp = ECSEngine.Instance.World.Transforms[entity.ID];
             tComp.Transform = transform;
-            tComp.Position = transform.position;
-            tComp.Rotation = transform.rotation;
+            tComp.Position = transform.position.ToTSVector();
+            tComp.Rotation = transform.rotation.ToTSQuaternion();
             ulong comMask = (ulong)ComponentMask.Transform;
 
             if (!IsPlayer)
@@ -69,7 +70,7 @@ namespace Xiangsoft.Lib.ECS.Authoring
                 mComp.SeparationWeight = stats.Get(FloatStat.SeparationWeight);
                 mComp.WobbleSpeed = stats.Get(FloatStat.WobbleSpeed);
                 mComp.WobbleStrength = stats.Get(FloatStat.WobbleStrength);
-                mComp.RandomPhase = DeterministicRandom.Range(0f, 100f);
+                mComp.RandomPhase = TSRandom.Range(0f, 100f);
                 comMask |= (ulong)ComponentMask.Movement;
 
                 ref AIComponent ai = ref ECSEngine.Instance.World.AIs[entity.ID];
@@ -122,7 +123,7 @@ namespace Xiangsoft.Lib.ECS.Authoring
 
                         TransformComponent tComp = ECSEngine.Instance.World.Transforms[gemEntity.ID];
                         tComp.Transform = gemGO.transform;
-                        tComp.Position = transform.position;
+                        tComp.Position = transform.position.ToTSVector();
 
                         // 3. 赋予 DNA
                         ulong gemMask = (ulong)(ComponentMask.Transform | ComponentMask.ExpGem);

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿using TrueSync;
 
 namespace Xiangsoft.Lib.ECS.Component
 {
@@ -8,19 +8,19 @@ namespace Xiangsoft.Lib.ECS.Component
 
         // 基础属性
         public int CasterID;        // 施法者的实体 ID
-        public Vector3 Direction;   // 飞行方向
-        public float Speed;
+        public TSVector Direction;   // 飞行方向
+        public FP Speed;
         public int Damage;
         public bool IsCrit;
-        public float HitRadius;
+        public FP HitRadius;
 
         // 高级机制 (穿透与回旋)
         public int MaxPiercing;
         public bool IsBoomerang;
-        public float MaxLifetime;
+        public FP MaxLifetime;
 
         // 运行时状态
-        public float LifeTimer;
+        public FP LifeTimer;
         public int CurrentHitCount;
         public bool IsReturning;
 

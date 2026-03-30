@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using TrueSync;
+using UnityEngine;
 using Xiangsoft.Lib.ECS;
 using Xiangsoft.Lib.ECS.Authoring;
 using Xiangsoft.Lib.ECS.Pool;
@@ -79,7 +80,7 @@ namespace Xiangsoft.Game.Level
                 return;
             }
 
-            DeterministicRandom.SetSeed(19890817);
+            TSRandom.instance = TSRandom.New(19890817);
             IsPlaying = true;
 
             foreach (var wave in CurrentLevelData.Waves)
@@ -94,11 +95,11 @@ namespace Xiangsoft.Game.Level
         private void spawnEnemy(WaveEvent wave)
         {
             // 在主角周围随机生成一个圆环坐标 (屏幕外盲区)
-            Vector2 randomCircle = DeterministicRandom.insideUnitCircle.normalized * DeterministicRandom.Range(MinSpawnRadius, MaxSpawnRadius);
-            Vector3 spawnPos = PlayerTransform.position + new Vector3(randomCircle.x, 0, randomCircle.y);
+            TSVector2 randomCircle = insideUnitCircle().normalized * TSRandom.Range(MinSpawnRadius, MaxSpawnRadius);
+            TSVector spawnPos = PlayerTransform.position.ToTSVector() + new TSVector(randomCircle.x, 0, randomCircle.y);
 
             // 从对象池拿到怪物
-            EntityAuthoring enemy = UnitPool.Instance.Get(wave.EnemyPrefab, spawnPos, Quaternion.identity);
+            EntityAuthoring enemy = UnitPool.Instance.Get(wave.EnemyPrefab, spawnPos, TSQuaternion.identity);
 
             // 记录存活
             wave.AliveEntities.Add(enemy.GetEntityID());
@@ -109,6 +110,13 @@ namespace Xiangsoft.Game.Level
             {
                 wave.IsFinished = true;
             }
+        }
+
+        private TSVector2 insideUnitCircle()
+        {
+            FP angle = TSRandom.value * TSMath.Pi * 2f;
+            FP r = TSMath.Sqrt(TSRandom.value); // 取平方根保证在圆内均匀分布
+            return new TSVector2(r * TSMath.Cos(angle), r * TSMath.Sin(angle));
         }
     }
 }

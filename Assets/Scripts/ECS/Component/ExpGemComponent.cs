@@ -1,4 +1,6 @@
-﻿namespace Xiangsoft.Lib.ECS.Component
+﻿using TrueSync;
+
+namespace Xiangsoft.Lib.ECS.Component
 {
     public enum ExpGemState : byte
     {
@@ -10,6 +12,6 @@
     {
         public ExpGemState State;
         public int ExpValue;        // 蕴含的经验值
-        public float CurrentSpeed;  // 当前飞行速度 (用于实现加速吸附)
+        public FP CurrentSpeed;  // 当前飞行速度 (用于实现加速吸附)
     }
 }

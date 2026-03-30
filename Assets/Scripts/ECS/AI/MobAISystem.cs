@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿using TrueSync;
 using Xiangsoft.Lib.ECS.Component;
 using Xiangsoft.Lib.ECS.System;
 using Xiangsoft.Lib.ECS.World;
@@ -12,14 +12,14 @@ namespace Xiangsoft.Lib.ECS.AI
             requireMask = (ulong)ComponentMask.AI;
         }
 
-        public override void Update(float deltaTime)
+        public override void Update(FP deltaTime)
         {
             int playerID = ECSEngine.Instance.PlayerEntityID;
 
             if (playerID == -1)
                 return;
 
-            Vector3 playerPos = world.Transforms[playerID].Position;
+            TSVector playerPos = world.Transforms[playerID].Position;
 
             for (int i = 0; i < world.MaxAllocatedID; i++)
             {
@@ -27,9 +27,9 @@ namespace Xiangsoft.Lib.ECS.AI
                     continue;
 
                 ref AIComponent ai = ref world.AIs[i];
-                Vector3 pos = world.Transforms[i].Position;
+                TSVector pos = world.Transforms[i].Position;
 
-                float sqrDist = (playerPos - pos).sqrMagnitude;
+                FP sqrDist = (playerPos - pos).sqrMagnitude;
 
                 if (ai.IsRanged)
                 {

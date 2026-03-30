@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using TrueSync;
 
 namespace Xiangsoft.Lib.LockStep
 {
@@ -10,10 +11,10 @@ namespace Xiangsoft.Lib.LockStep
 
         [Header("网络帧同步设置")]
         public int LogicFrameRate = 30; // 逻辑帧率：每秒跑30次 ECS Update
-        private float logicTickTime;    // 每帧间隔 (1.0 / 30 = 0.0333f)
-        private float accumulator = 0f; // 时间累加器
+        private FP logicTickTime;    // 每帧间隔 (1.0 / 30 = 0.0333f)
+        private FP accumulator = 0f; // 时间累加器
         public int CurrentLogicFrame { get; private set; } // 当前跑到了第几帧
-        private List<Action<float>> logicUpdates = null;
+        private List<Action<FP>> logicUpdates = null;
         public bool StartLogic { get; set; }
 
         private void Awake()
@@ -24,7 +25,7 @@ namespace Xiangsoft.Lib.LockStep
             Application.targetFrameRate = LogicFrameRate; // 固定渲染帧率，防止过高或过低
             CurrentLogicFrame = 0;
             logicTickTime = 1f / LogicFrameRate;
-            logicUpdates = new List<Action<float>>();
+            logicUpdates = new List<Action<FP>>();
         }
 
         private void Update()
@@ -36,7 +37,7 @@ namespace Xiangsoft.Lib.LockStep
 
             while (accumulator >= logicTickTime)
             {
-                foreach (Action<float> logicUpdate in logicUpdates)
+                foreach (Action<FP> logicUpdate in logicUpdates)
                 {
                     logicUpdate.Invoke(logicTickTime);
                 }
@@ -46,7 +47,7 @@ namespace Xiangsoft.Lib.LockStep
             }
         }
 
-        public void RegisterLogicUpdate(Action<float> logicUpdate)
+        public void RegisterLogicUpdate(Action<FP> logicUpdate)
         {
             if (logicUpdates.Contains(logicUpdate))
                 return;
@@ -54,7 +55,7 @@ namespace Xiangsoft.Lib.LockStep
             logicUpdates.Add(logicUpdate);
         }
 
-        public void UnregisterLogicUpdate(Action<float> logicUpdate)
+        public void UnregisterLogicUpdate(Action<FP> logicUpdate)
         {
             if (!logicUpdates.Contains(logicUpdate))
                 return;

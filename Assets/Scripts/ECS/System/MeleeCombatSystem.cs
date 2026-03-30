@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿using TrueSync;
 using Xiangsoft.Game.Skill;
 using Xiangsoft.Lib.ECS.Attribute;
 using Xiangsoft.Lib.ECS.Component;
@@ -13,14 +13,14 @@ namespace Xiangsoft.Lib.ECS.System
             requireMask = (ulong)ComponentMask.AI;
         }
 
-        public override void Update(float deltaTime)
+        public override void Update(FP deltaTime)
         {
             int playerID = ECSEngine.Instance.PlayerEntityID;
 
             if (playerID == -1)
                 return;
 
-            Vector3 playerPos = world.Transforms[playerID].Position;
+            TSVector playerPos = world.Transforms[playerID].Position;
             EntityStats playerStats = world.StatsBridge[playerID];
 
             if (playerStats == null || playerStats.IsDead)

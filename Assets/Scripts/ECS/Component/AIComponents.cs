@@ -1,4 +1,6 @@
-﻿namespace Xiangsoft.Lib.ECS.Component
+﻿using TrueSync;
+
+namespace Xiangsoft.Lib.ECS.Component
 {
     public enum AIState : byte
     {
@@ -20,11 +22,11 @@
         /// <summary>
         /// 进入攻击状态的距离
         /// </summary>
-        public float AttackRange;
+        public FP AttackRange;
 
         /// <summary>
         /// 触发逃跑的距离 (贴脸距离)
         /// </summary>
-        public float FleeRange;
+        public FP FleeRange;
     }
 }

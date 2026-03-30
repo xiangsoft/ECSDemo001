@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using TrueSync;
 using UnityEngine;
 using Xiangsoft.Lib.ECS.Component;
 using Xiangsoft.Lib.ECS.Grid;
@@ -22,7 +22,7 @@ namespace Xiangsoft.Lib.ECS.System
             requireMask = (ulong)(ComponentMask.Transform | ComponentMask.Projectile);
         }
 
-        public override void Update(float deltaTime)
+        public override void Update(FP deltaTime)
         {
             // 批量遍历所有实体，寻找激活的子弹
             for (int i = 0; i < world.MaxAllocatedID; i++)
@@ -50,8 +50,8 @@ namespace Xiangsoft.Lib.ECS.System
 
                 if (proj.IsReturning && world.Transforms[proj.CasterID].Transform != null)
                 {
-                    Vector3 casterPos = world.Transforms[proj.CasterID].Position;
-                    Vector3 returnDir = casterPos - tComp.Position;
+                    TSVector casterPos = world.Transforms[proj.CasterID].Position;
+                    TSVector returnDir = casterPos - tComp.Position;
                     returnDir.y = 0;
 
                     if (returnDir.sqrMagnitude < 1f)
@@ -60,7 +60,8 @@ namespace Xiangsoft.Lib.ECS.System
                         continue;
                     }
 
-                    proj.Direction = Vector3.Slerp(proj.Direction, returnDir.normalized, deltaTime * 5f).normalized;
+                    
+                    proj.Direction = Vector3.Slerp(proj.Direction.ToVector(), returnDir.normalized.ToVector(), (float)deltaTime * 5f).normalized.ToTSVector();
                 }
 
                 if (proj.LifeTimer >= proj.MaxLifetime)
@@ -72,14 +73,14 @@ namespace Xiangsoft.Lib.ECS.System
                 // --- 2. 飞行位移计算 ---
                 tComp.Position += proj.Direction * proj.Speed * deltaTime;
 
-                if (proj.Direction != Vector3.zero)
+                if (proj.Direction != TSVector.zero)
                 {
-                    tComp.Rotation = Quaternion.LookRotation(proj.Direction);
+                    tComp.Rotation = TSQuaternion.LookRotation(proj.Direction);
                 }
 
                 // --- 3. 空间哈希防抖碰撞检测 (O(1) 极速索敌) ---
-                spatialGrid.FindNeighbors(tComp.Position, hitBuffer);
-                float sqrHitRadius = proj.HitRadius * proj.HitRadius;
+                spatialGrid.FindNeighbors(tComp.Position.ToVector(), hitBuffer);
+                FP sqrHitRadius = proj.HitRadius * proj.HitRadius;
 
                 for (int j = 0; j < hitBuffer.Count; j++)
                 {
@@ -89,7 +90,7 @@ namespace Xiangsoft.Lib.ECS.System
                     if (targetID == proj.CasterID || world.StatsBridge[targetID] == null)
                         continue;
 
-                    Vector3 offset = tComp.Position - world.Transforms[targetID].Position;
+                    TSVector offset = tComp.Position - world.Transforms[targetID].Position;
                     offset.y = 0;
 
                     // 纯数学撞击判定！

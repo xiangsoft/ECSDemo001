@@ -1,14 +1,15 @@
 using System.Collections.Generic;
+using TrueSync;
 using UnityEngine;
 
 namespace Xiangsoft.Lib.Pathfinding
 {
     public class FlowFieldGrid : MonoBehaviour
     {
-        private Vector2 upLeft = new Vector2(-1, 1).normalized;
-        private Vector2 upRight = new Vector2(1, 1).normalized;
-        private Vector2 downLeft = new Vector2(-1, -1).normalized;
-        private Vector2 downRight = new Vector2(1, -1).normalized;
+        private TSVector2 upLeft = new TSVector2(-1, 1).normalized;
+        private TSVector2 upRight = new TSVector2(1, 1).normalized;
+        private TSVector2 downLeft = new TSVector2(-1, -1).normalized;
+        private TSVector2 downRight = new TSVector2(1, -1).normalized;
 
         private Queue<int> indicesToCheck = null;
 
@@ -203,7 +204,7 @@ namespace Xiangsoft.Lib.Pathfinding
                     continue;
 
                 uint bestCost = cell.BestCost;
-                Vector2 bestDirection = Vector2.zero;
+                TSVector2 bestDirection = TSVector2.zero;
 
                 if ((cell.AvailableDirections & DirectionFlags.Up) != 0)
                 {
@@ -211,7 +212,7 @@ namespace Xiangsoft.Lib.Pathfinding
                     if (BaseGrid.Instance.Cells[index].Cost != 255 && BaseGrid.Instance.Cells[index].BestCost < bestCost)
                     {
                         bestCost = BaseGrid.Instance.Cells[index].BestCost;
-                        bestDirection = Vector2.up;
+                        bestDirection = TSVector2.up;
                     }
                 }
 
@@ -221,7 +222,7 @@ namespace Xiangsoft.Lib.Pathfinding
                     if (BaseGrid.Instance.Cells[index].Cost != 255 && BaseGrid.Instance.Cells[index].BestCost < bestCost)
                     {
                         bestCost = BaseGrid.Instance.Cells[index].BestCost;
-                        bestDirection = Vector2.down;
+                        bestDirection = TSVector2.down;
                     }
                 }
 
@@ -231,7 +232,7 @@ namespace Xiangsoft.Lib.Pathfinding
                     if (BaseGrid.Instance.Cells[index].Cost != 255 && BaseGrid.Instance.Cells[index].BestCost < bestCost)
                     {
                         bestCost = BaseGrid.Instance.Cells[index].BestCost;
-                        bestDirection = Vector2.left;
+                        bestDirection = TSVector2.left;
                     }
                 }
 
@@ -241,7 +242,7 @@ namespace Xiangsoft.Lib.Pathfinding
                     if (BaseGrid.Instance.Cells[index].Cost != 255 && BaseGrid.Instance.Cells[index].BestCost < bestCost)
                     {
                         bestCost = BaseGrid.Instance.Cells[index].BestCost;
-                        bestDirection = Vector2.right;
+                        bestDirection = TSVector2.right;
                     }
                 }
 
@@ -309,33 +310,33 @@ namespace Xiangsoft.Lib.Pathfinding
             }
         }
 
-        public Vector2 GetDirectionFromWorldPos(Vector3 worldPos)
+        public TSVector2 GetDirectionFromWorldPos(TSVector worldPos)
         {
             if (BaseGrid.Instance.Cells == null || BaseGrid.Instance.Cells.Length == 0)
-                return Vector2.zero;
+                return TSVector2.zero;
 
-            int index = BaseGrid.Instance.GetCellIndexFromWorldPos(worldPos);
+            int index = BaseGrid.Instance.GetCellIndexFromWorldPos(worldPos.ToVector());
 
             return BaseGrid.Instance.Cells[index].BestDirection;
         }
 
         // 判定1：是否真正到达了终点？（积分场的代价值为0才是真到了）
-        public bool HasArrived(Vector3 worldPos)
+        public bool HasArrived(TSVector worldPos)
         {
             if (BaseGrid.Instance.Cells == null || BaseGrid.Instance.Cells.Length == 0)
                 return false;
 
-            int index = BaseGrid.Instance.GetCellIndexFromWorldPos(worldPos);
+            int index = BaseGrid.Instance.GetCellIndexFromWorldPos(worldPos.ToVector());
             return BaseGrid.Instance.Cells[index].BestCost == 0;
         }
 
         // 判定2：要去的那个点是不是墙壁？（用于防穿墙）
-        public bool IsWalkable(Vector3 worldPos)
+        public bool IsWalkable(TSVector worldPos)
         {
             if (BaseGrid.Instance.Cells == null || BaseGrid.Instance.Cells.Length == 0)
                 return false;
 
-            int index = BaseGrid.Instance.GetCellIndexFromWorldPos(worldPos);
+            int index = BaseGrid.Instance.GetCellIndexFromWorldPos(worldPos.ToVector());
             return BaseGrid.Instance.Cells[index].Cost != 255;
         }
 
@@ -359,7 +360,7 @@ namespace Xiangsoft.Lib.Pathfinding
             for (int i = 0; i < BaseGrid.Instance.Cells.Length; i++)
             {
                 Cell cell = BaseGrid.Instance.Cells[i];
-                Vector3 center = cell.WorldPosition;
+                Vector3 center = cell.WorldPosition.ToVector();
 
                 // --- 1. 画格子颜色与方向 (原有逻辑) ---
                 if (cell.Cost == 255)
@@ -372,10 +373,10 @@ namespace Xiangsoft.Lib.Pathfinding
                     Gizmos.color = new Color(0f, 1f, 0f, 0.8f);
                     Gizmos.DrawCube(center, new Vector3(BaseGrid.Instance.CellSize, 0.1f, BaseGrid.Instance.CellSize));
                 }
-                else if (cell.BestDirection != Vector2.zero)
+                else if (cell.BestDirection != TSVector2.zero)
                 {
                     Gizmos.color = Color.white;
-                    Vector3 dir3D = new Vector3(cell.BestDirection.x, 0, cell.BestDirection.y);
+                    Vector3 dir3D = new Vector3((float)cell.BestDirection.x, 0, (float)cell.BestDirection.y);
                     Vector3 endPos = center + dir3D * (BaseGrid.Instance.CellSize * 0.4f);
                     Gizmos.DrawLine(center, endPos);
                     Gizmos.DrawSphere(endPos, BaseGrid.Instance.CellSize * 0.1f);

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿using TrueSync;
 
 namespace Xiangsoft.Lib.Pathfinding
 {
@@ -7,12 +7,12 @@ namespace Xiangsoft.Lib.Pathfinding
         /// <summary>
         /// 世界坐标
         /// </summary>
-        public Vector3 WorldPosition;
+        public TSVector WorldPosition;
 
         /// <summary>
         /// 格子坐标
         /// </summary>
-        public Vector2Int GridPosition;
+        public TSVector2 GridPosition;
 
         /// <summary>
         /// 代价
@@ -27,7 +27,7 @@ namespace Xiangsoft.Lib.Pathfinding
         /// <summary>
         /// 流场方向
         /// </summary>
-        public Vector2 BestDirection;
+        public TSVector2 BestDirection;
 
         /// <summary>
         /// 允许的邻居方向

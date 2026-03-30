@@ -182,7 +182,7 @@ namespace Xiangsoft.Lib.ECS.Attribute
             if (DamageTextManager.Instance == null)
                 return;
 
-            DamageTextManager.Instance.ShowDamage(actualDamage, transform.position, isCrit);
+            DamageTextManager.Instance.ShowDamage(actualDamage, transform.position.ToTSVector(), isCrit);
         }
 
         private void die()

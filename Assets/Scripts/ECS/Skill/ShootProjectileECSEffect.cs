@@ -1,10 +1,10 @@
-﻿using UnityEngine;
+﻿using TrueSync;
+using UnityEngine;
 using Xiangsoft.Game.Skill;
 using Xiangsoft.Lib.ECS.Attribute;
 using Xiangsoft.Lib.ECS.Authoring;
 using Xiangsoft.Lib.ECS.Component;
 using Xiangsoft.Lib.ECS.Pool;
-using Xiangsoft.Lib.LockStep;
 
 namespace Xiangsoft.Lib.ECS.Skill
 {
@@ -28,14 +28,14 @@ namespace Xiangsoft.Lib.ECS.Skill
             if (context.Caster == null)
                 return;
 
-            Vector3 fireDirection;
+            TSVector fireDirection;
 
             if (context.Target != null)
-                fireDirection = (context.Target.transform.position - context.Caster.transform.position).normalized;
+                fireDirection = (context.Target.transform.position - context.Caster.transform.position).normalized.ToTSVector();
             else if (context.TargetPosition != default)
-                fireDirection = (context.TargetPosition - context.Caster.transform.position).normalized;
+                fireDirection = (context.TargetPosition - context.Caster.transform.position.ToTSVector()).normalized;
             else
-                fireDirection = Vector3.zero;
+                fireDirection = TSVector.zero;
 
             fireDirection.y = 0; // 保持水平飞行
 
@@ -43,7 +43,7 @@ namespace Xiangsoft.Lib.ECS.Skill
             float critRate = context.Caster.Get(FloatStat.CritRate);
             float critMult = context.Caster.Get(FloatStat.CritMultiplier) <= 0f ? 2.0f : context.Caster.Get(FloatStat.CritMultiplier);
 
-            bool isCrit = DeterministicRandom.value < critRate;
+            bool isCrit = TSRandom.value < critRate;
             int damage = Mathf.CeilToInt(attack * damageMultiplier * (isCrit ? critMult : 1.0f));
 
             // 1. 获取施法者的 ECS ID (假设你可以通过 Caster 拿到它的 EntityID)
@@ -80,12 +80,12 @@ namespace Xiangsoft.Lib.ECS.Skill
             GameObject projGO = ProjectilePool.Instance.Get(projectilePrefab);
             TransformComponent tComp = ECSEngine.Instance.World.Transforms[entity.ID];
             tComp.Transform = projGO.transform;
-            tComp.Position = context.Caster.transform.position + Vector3.up * 1f;
+            tComp.Position = (context.Caster.transform.position + Vector3.up * 1f).ToTSVector();
             comMask |= (ulong)ComponentMask.Transform;
 
             // 强制立刻刷新一次皮囊的位置和朝向，防止从池子里刚拿出来时在出生点闪烁一帧
-            projGO.transform.position = tComp.Position;
-            projGO.transform.rotation = Quaternion.LookRotation(fireDirection);
+            projGO.transform.position = tComp.Position.ToVector();
+            projGO.transform.rotation = Quaternion.LookRotation(fireDirection.ToVector());
 
             ECSEngine.Instance.World.EntityMasks[entity.ID] = comMask;
         }

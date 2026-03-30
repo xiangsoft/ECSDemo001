@@ -1,3 +1,4 @@
+using TrueSync;
 using UnityEngine;
 using Xiangsoft.Lib.ECS.Attribute;
 
@@ -7,7 +8,7 @@ namespace Xiangsoft.Game.Skill
     {
         public EntityStats Caster;
         public EntityStats Target;
-        public Vector3 TargetPosition;
+        public TSVector TargetPosition;
     }
 
     public abstract class SkillEffect : ScriptableObject

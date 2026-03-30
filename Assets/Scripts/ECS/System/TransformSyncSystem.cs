@@ -1,4 +1,5 @@
-﻿using Xiangsoft.Lib.ECS.Component;
+﻿using TrueSync;
+using Xiangsoft.Lib.ECS.Component;
 
 namespace Xiangsoft.Lib.ECS.System
 {
@@ -9,7 +10,7 @@ namespace Xiangsoft.Lib.ECS.System
             requireMask = (ulong)ComponentMask.Transform;
         }
 
-        public override void Update(float deltaTime)
+        public override void Update(FP deltaTime)
         {
             for (int i = 0; i < world.MaxAllocatedID; i++)
             {
@@ -24,8 +25,8 @@ namespace Xiangsoft.Lib.ECS.System
                 if (tComp.Transform == null)
                     continue;
 
-                tComp.Transform.position = tComp.Position;
-                tComp.Transform.rotation = tComp.Rotation;
+                tComp.Transform.position = tComp.Position.ToVector();
+                tComp.Transform.rotation = tComp.Rotation.ToQuaternion();
             }
         }
     }

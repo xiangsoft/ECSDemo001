@@ -25,6 +25,9 @@ namespace Xiangsoft.Game.Network
         {
             if (Instance == null)
                 Instance = this;
+
+            new FrameData(); // 预热 MemoryPack，避免后续序列化时的性能 hiccup
+            new PlayerCommand(); // 同上
         }
 
         private void Start()

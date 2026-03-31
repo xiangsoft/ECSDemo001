@@ -1,12 +1,5 @@
 {
   "dependencies": {
-    "com.cysharp.memorypack": {
-      "version": "https://github.com/Cysharp/MemoryPack.git?path=src/MemoryPack.Unity/Assets/MemoryPack.Unity",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {},
-      "hash": "612a4815eb5fbf2d67d4ee734fdb92793f8a1304"
-    },
     "com.mrdav30.fixedmathsharp": {
       "version": "https://github.com/mrdav30/FixedMathSharp-Unity.git",
       "depth": 0,

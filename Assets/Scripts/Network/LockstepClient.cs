@@ -2,7 +2,6 @@
 using MemoryPack;
 using System;
 using System.Collections.Generic;
-using UnityEditor.VersionControl;
 using UnityEngine;
 
 namespace Xiangsoft.Game.Network
@@ -26,8 +25,7 @@ namespace Xiangsoft.Game.Network
             if (Instance == null)
                 Instance = this;
 
-            new FrameData(); // 预热 MemoryPack，避免后续序列化时的性能 hiccup
-            new PlayerCommand(); // 同上
+            registerFormatter();
         }
 
         private void Start()
@@ -48,6 +46,12 @@ namespace Xiangsoft.Game.Network
         {
             client.TickIncoming();
             client.TickOutgoing();
+        }
+
+        private void registerFormatter()
+        {
+            //FrameData.RegisterFormatter();
+            //PlayerCommand.RegisterFormatter();
         }
 
         public void SendLocalCommand(PlayerCommand cmd)

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Xiangsoft.Game.Network
 {
     [MemoryPackable]
-    public partial class PlayerCommand
+    public partial struct PlayerCommand
     {
         public int PlayerID { get; set; }
         public long MoveDirX { get; set; }

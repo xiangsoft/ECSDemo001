@@ -87,7 +87,7 @@ namespace Xiangsoft.Game.UI
                 data.TextComponent.transform.rotation = camRotation;
 
                 // 渐渐透明
-                Fixed64 alpha = 1f - (data.LifeTimer / lifetime);
+                Fixed64 alpha = Fixed64.One - (data.LifeTimer / lifetime);
                 data.CurrentColor.a = (float)alpha;
                 data.TextComponent.color = data.CurrentColor;
             }

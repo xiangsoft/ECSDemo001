@@ -49,7 +49,7 @@ namespace Xiangsoft.Lib.ECS.System
                     Vector2d flowDir2D = flowGrid.GetDirectionFromWorldPos(currentPos);
                     desiredVelocity = new Vector3d(flowDir2D.x, Fixed64.Zero, flowDir2D.y);
 
-                    if (desiredVelocity != Vector3d.Zero)
+                    if (desiredVelocity.x != Fixed64.Zero || desiredVelocity.z != Fixed64.Zero)
                     {
                         Vector3d rightVector = new Vector3d(-desiredVelocity.z, Fixed64.Zero, desiredVelocity.x);
                         Fixed64 wobble = FixedMath.Sin(time * moveComp.WobbleSpeed + moveComp.RandomPhase) * moveComp.WobbleStrength;
@@ -72,7 +72,7 @@ namespace Xiangsoft.Lib.ECS.System
                     Vector3d playerPos = world.Transforms[ECSEngine.Instance.PlayerEntityID].Position;
                     Vector3d lookDir = (playerPos - currentPos).Normal;
                     lookDir.y = Fixed64.Zero;
-                    if (lookDir != Vector3d.Zero)
+                    if (lookDir.x != Fixed64.Zero || lookDir.z != Fixed64.Zero)
                     {
                         world.Transforms[i].Rotation = FixedQuaternion.Lerp(world.Transforms[i].Rotation, FixedQuaternion.LookRotation(lookDir), moveComp.RotationSpeed * deltaTime);
                     }
@@ -105,7 +105,7 @@ namespace Xiangsoft.Lib.ECS.System
                 Vector3d finalDirection = (desiredVelocity + separationForce * moveComp.SeparationWeight).Normal;
 
                 // 4. 分轴移动与防穿墙计算
-                if (finalDirection == Vector3d.Zero)
+                if (finalDirection.x == Fixed64.Zero && finalDirection.z == Fixed64.Zero)
                     continue;
 
                 Vector3d moveDelta = finalDirection * moveComp.MoveSpeed * deltaTime;

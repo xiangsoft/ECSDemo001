@@ -31,7 +31,7 @@ namespace Xiangsoft.Lib.ECS.Grid
             for (int i = 0; i < length; i++)
             {
                 // 预分配容量，假设每个格子里最多挤 32 个怪，彻底消灭运行时 GC
-                cells[i] = new List<int>(32);
+                cells[i] = new List<int>(256);
             }
         }
 
@@ -79,7 +79,7 @@ namespace Xiangsoft.Lib.ECS.Grid
                         List<int> cellEntities = cells[GetIndex(checkX, checkY)];
                         for (int i = 0; i < cellEntities.Count; i++)
                         {
-                            if (i >= results.Capacity)
+                            if (results.Count >= results.Capacity)
                                 break;
 
                             results.Add(cellEntities[i]);

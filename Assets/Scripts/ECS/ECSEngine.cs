@@ -67,7 +67,7 @@ namespace Xiangsoft.Lib.ECS
 
         private void logicUpdate(Fixed64 logicTickTime)
         {
-            if (World.ActiveEntityCount == 0)
+            if (World.ActiveEntityCount == 0 || World.StatsBridge[PlayerEntityID].IsDead)
                 return;
 
             rebuildSpatialGrid();

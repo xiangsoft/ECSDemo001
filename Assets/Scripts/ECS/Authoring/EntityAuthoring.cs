@@ -97,6 +97,9 @@ namespace Xiangsoft.Lib.ECS.Authoring
 
         protected override void OnDeath(EntityStats stats)
         {
+            if (!gameObject.activeSelf)
+                return;
+
             if (IsPlayer)
             {
                 gameObject.SetActive(false);

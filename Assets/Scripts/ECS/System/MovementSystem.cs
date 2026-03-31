@@ -74,7 +74,7 @@ namespace Xiangsoft.Lib.ECS.System
                     lookDir.y = Fixed64.Zero;
                     if (lookDir != Vector3d.Zero)
                     {
-                        world.Transforms[i].Rotation = FixedQuaternion.Slerp(world.Transforms[i].Rotation, FixedQuaternion.LookRotation(lookDir), moveComp.RotationSpeed * deltaTime);
+                        world.Transforms[i].Rotation = FixedQuaternion.Lerp(world.Transforms[i].Rotation, FixedQuaternion.LookRotation(lookDir), moveComp.RotationSpeed * deltaTime);
                     }
                 }
 
@@ -97,7 +97,7 @@ namespace Xiangsoft.Lib.ECS.System
                     if (sqrDist < sepRadius * sepRadius && sqrDist > minDist)
                     {
                         Fixed64 dist = FixedMath.Sqrt(sqrDist);
-                        Fixed64 force = 1f - (dist / sepRadius);
+                        Fixed64 force = Fixed64.One - (dist / sepRadius);
                         separationForce += (dirAway / dist) * force;
                     }
                 }
@@ -120,7 +120,7 @@ namespace Xiangsoft.Lib.ECS.System
 
                 // 将计算好的结果写回数据
                 world.Transforms[i].Position = currentPos;
-                world.Transforms[i].Rotation = FixedQuaternion.Slerp(
+                world.Transforms[i].Rotation = FixedQuaternion.Lerp(
                     world.Transforms[i].Rotation,
                     FixedQuaternion.LookRotation(finalDirection),
                     moveComp.RotationSpeed * deltaTime

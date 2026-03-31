@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using Xiangsoft.Lib.LockStep;
 
 namespace Xiangsoft.Game.UI
 {
@@ -13,6 +14,9 @@ namespace Xiangsoft.Game.UI
         public TextMeshPro textPrefab;
         public Fixed64 floatSpeed = Fixed64.Two;    // 向上漂移的速度
         public Fixed64 lifetime = Fixed64.One;      // 显示时长
+
+        // 预先分配好内存，这辈子都不产生 GC
+        private static char[] numberBuffer = new char[128];
 
         /// <summary>
         /// 纯数据驱动的结构体（紧凑内存，极速遍历）
@@ -106,10 +110,11 @@ namespace Xiangsoft.Game.UI
             tmp.gameObject.SetActive(true);
 
             // 稍微随机偏移一点，防止数字完全叠在一起
-            Vector3d randomOffset = new Vector3d(Random.Range(-0.5f, 0.5f), 1f, Random.Range(-0.5f, 0.5f));
+            Vector3d randomOffset = new Vector3d(RandomManager.Instance.Range(new Fixed64(-0.5), new Fixed64(0.5)), Fixed64.One, RandomManager.Instance.Range(new Fixed64(-0.5), new Fixed64(0.5)));
             Vector3d startPos = position + randomOffset;
 
-            tmp.text = damage.ToString();
+            int charLength = intToCharArray(damage, numberBuffer);
+            tmp.SetCharArray(numberBuffer, 0, charLength); // 直接使用 char[]，避免 string 产生 GC
             tmp.color = isCrit ? Color.red : Color.white; // 暴击红字，普通白字
             tmp.fontSize = isCrit ? 6 : 4;               // 暴击字体变大
 
@@ -122,6 +127,36 @@ namespace Xiangsoft.Game.UI
                 CurrentColor = tmp.color
             };
             activeCount++;
+        }
+
+        // 手搓一个：将整数塞进 char[] 的 0 GC 方法
+        private int intToCharArray(int value, char[] buffer)
+        {
+            if (value == 0)
+            {
+                buffer[0] = '0';
+                return 1;
+            }
+
+            int length = 0;
+            int temp = value;
+
+            // 1. 算一下这个数字有几位
+            while (temp > 0)
+            {
+                length++;
+                temp /= 10;
+            }
+
+            // 2. 从后往前，把每一位数字转成字符塞进数组
+            temp = value;
+            for (int i = length - 1; i >= 0; i--)
+            {
+                buffer[i] = (char)('0' + (temp % 10)); // '0' 的 ASCII 码加上偏移
+                temp /= 10;
+            }
+
+            return length; // 返回实际长度
         }
     }
 }

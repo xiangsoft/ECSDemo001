@@ -17,18 +17,9 @@ namespace Xiangsoft.Lib.ECS.Authoring
         private void Awake()
         {
             stats = GetComponent<EntityStats>();
+            stats.OnDeath += OnDeath;
 
             OnLoad();
-        }
-
-        private void OnEnable()
-        {
-            stats.OnDeath += OnDeath;
-        }
-
-        private void OnDisable()
-        {
-            stats.OnDeath -= OnDeath;
         }
 
         protected virtual void OnLoad()

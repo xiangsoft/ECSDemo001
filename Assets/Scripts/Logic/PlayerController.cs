@@ -89,7 +89,7 @@ namespace Xiangsoft.Game.Logic
                 transform.position = Vector3.MoveTowards(transform.position, targetWaypoint, ((float)Stats.Get(FloatStat.MoveSpeed)) * Time.deltaTime);
 
                 // 平滑转向
-                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(moveDir), ((float)Stats.Get(FloatStat.RotationSpeed)) * Time.deltaTime);
+                transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(moveDir), ((float)Stats.Get(FloatStat.RotationSpeed)) * Time.deltaTime);
             }
         }
 

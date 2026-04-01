@@ -15,9 +15,10 @@ MonoBehaviour:
   SkillID: 5
   SkillName: "\u706B\u7403\u672F"
   CastRange: 20
-  Cooldown: 1.5
+  Cooldown: 3
   RespectsGCD: 1
   TriggersGCD: 1
   GCDTime: 1
+  Priority: 5
   Effects:
   - {fileID: 11400000, guid: 3bfa2cc41a96fc145a9322bef6a362c6, type: 2}

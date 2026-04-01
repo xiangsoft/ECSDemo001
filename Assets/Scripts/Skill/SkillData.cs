@@ -19,6 +19,10 @@ namespace Xiangsoft.Game.Skill
         public bool TriggersGCD = true; // 释放该技能后，是否会触发 GCD？
         public float GCDTime = 1.0f;    // 触发的 GCD 长度 (MMO 标准通常是 1.0s - 1.5s)
 
+        [Header("AI 决策")]
+        [Tooltip("技能释放优先级（权重），数字越大越优先释放")]
+        public int Priority = 0;
+
         [Header("技能效果")]
         public List<SkillEffect> Effects = new List<SkillEffect>();
     }

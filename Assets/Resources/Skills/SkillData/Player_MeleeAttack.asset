@@ -19,5 +19,6 @@ MonoBehaviour:
   RespectsGCD: 1
   TriggersGCD: 1
   GCDTime: 1
+  Priority: 1
   Effects:
   - {fileID: 11400000, guid: dc7fd0ee16d52e94da259c5fb76f2aa0, type: 2}

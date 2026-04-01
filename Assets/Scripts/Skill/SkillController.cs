@@ -76,15 +76,27 @@ namespace Xiangsoft.Game.Skill
 
         public bool TryCastAll(EntityStats target = null, Vector3d targetPos = default)
         {
-            bool result = false;
+            int maxPriority = 0;
+            int index = 0;
+
             for (int i = 0; i < skills.Count; i++)
             {
-                result = TryCastSkill(i, target, targetPos);
-                if (result)
-                    break;
+                SkillInstance skillInstance = skills[i];
+
+                if (!skillInstance.IsReady)
+                    return false;
+
+                if (skillInstance.Data.RespectsGCD && currentGCD > 0)
+                    return false;
+
+                if (skillInstance.Data.Priority > maxPriority)
+                {
+                    maxPriority = skillInstance.Data.Priority;
+                    index = i;
+                }
             }
 
-            return result;
+            return TryCastSkill(index, target, targetPos);
         }
 
         public bool TryCastSkill(int skillIndex, EntityStats target = null, Vector3d targetPos = default)

@@ -1,6 +1,7 @@
 ﻿using FixedMathSharp;
 using System.Collections.Generic;
 using UnityEngine;
+using Xiangsoft.Game.Network;
 using Xiangsoft.Game.Skill;
 using Xiangsoft.Lib.ECS;
 using Xiangsoft.Lib.ECS.Attribute;
@@ -14,6 +15,9 @@ namespace Xiangsoft.Game.Logic
         public static PlayerController Instance { get; private set; }
 
         public EntityStats Stats;
+        [HideInInspector]
+        public Vector3d NoMove = new Vector3d(99999, 0, 99999);
+
         private SkillController skillController;
 
         private List<Vector3> currentPath = new List<Vector3>(100);
@@ -39,10 +43,23 @@ namespace Xiangsoft.Game.Logic
             if (!isInitialized)
                 return;
 
-            handleMouseInput();
+            if (LockstepClient.Instance == null || !LockstepClient.Instance.IsConnected)
+                return;
+
+            Vector3d worldPos = handleMouseInput();
             followPath();
             checkGridChangeAndUpdate(false);
-            checkSkills();
+            bool isCastSkill = checkSkills();
+
+            PlayerCommand cmd = new PlayerCommand
+            {
+                PlayerID = ECSEngine.Instance.PlayerEntityID,
+                MoveDirX = worldPos.x.m_rawValue,
+                MoveDirZ = worldPos.z.m_rawValue,
+                IsCastSkill = isCastSkill
+            };
+
+            LockstepClient.Instance.SendLocalCommand(cmd);
         }
 
         private void initPlayer()
@@ -53,18 +70,16 @@ namespace Xiangsoft.Game.Logic
             isInitialized = true;
         }
 
-        private void handleMouseInput()
+        private Vector3d handleMouseInput()
         {
             if (Input.GetMouseButtonDown(0))
             {
                 Vector3 mousePos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f);
                 Vector3 worldMousePos = Camera.main.ScreenToWorldPoint(mousePos);
-
-                if (BaseGrid.Instance.AStarGrid.FindPath(transform.position, worldMousePos, currentPath))
-                {
-                    currentWaypointIndex = 0; // 重置路点索引，准备出发
-                }
+                return worldMousePos.ToVector3d();
             }
+
+            return NoMove;
         }
 
         private void followPath()
@@ -110,7 +125,39 @@ namespace Xiangsoft.Game.Logic
             }
         }
 
-        private void checkSkills()
+        private bool checkSkills()
+        {
+            if (skillController == null || ECSEngine.Instance == null || ECSEngine.Instance.SpatialGrid == null)
+                return false;
+
+            enemiesNearMe.Clear();
+            ECSEngine.Instance.SpatialGrid.FindNeighbors(transform.position.ToVector3d(), enemiesNearMe);
+
+            if (enemiesNearMe.Count == 0)
+                return false;
+
+            EntityStats targetStats = null;
+            Vector3d targetPos = Vector3d.Zero;
+
+            foreach (int id in enemiesNearMe)
+            {
+                EntityStats stats = ECSEngine.Instance.World.StatsBridge[id];
+
+                if (stats == null || stats.IsDead || stats == Stats)
+                    continue;
+
+                targetStats = stats;
+                targetPos = ECSEngine.Instance.World.Transforms[id].Position;
+                break;
+            }
+
+            if (targetStats == null)
+                return false;
+
+            return skillController.CheckCanCastAny();
+        }
+
+        public void TryCastSkill()
         {
             if (skillController == null || ECSEngine.Instance == null || ECSEngine.Instance.SpatialGrid == null)
                 return;
@@ -140,6 +187,14 @@ namespace Xiangsoft.Game.Logic
                 return;
 
             skillController.TryCastAll(targetStats, targetPos);
+        }
+
+        public void Move(Vector3d worldPos)
+        {
+            if (BaseGrid.Instance.AStarGrid.FindPath(transform.position, worldPos.ToVector3(), currentPath))
+                currentWaypointIndex = 0; // 重置路点索引，准备出发
+            else
+                Debug.LogWarning("Wrong Pos");
         }
 
 #if UNITY_EDITOR

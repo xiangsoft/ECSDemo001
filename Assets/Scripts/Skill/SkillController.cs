@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Xiangsoft.Lib.ECS.Attribute;
+using static UnityEngine.GraphicsBuffer;
 
 namespace Xiangsoft.Game.Skill
 {
@@ -50,12 +51,40 @@ namespace Xiangsoft.Game.Skill
             }
         }
 
-        public void TryCastAll(EntityStats target = null, Vector3d targetPos = default)
+        public bool CheckCanCastAny()
         {
+            bool result = false;
+            for (int skillIndex = 0; skillIndex < skills.Count; skillIndex++)
+            {
+                if (skillIndex < 0 || skillIndex >= skills.Count)
+                    continue;
+
+                SkillInstance skill = skills[skillIndex];
+
+                if (!skill.IsReady)
+                    continue;
+
+                if (skill.Data.RespectsGCD && currentGCD > 0)
+                    continue;
+
+                result = true;
+                break;
+            }
+
+            return result;
+        }
+
+        public bool TryCastAll(EntityStats target = null, Vector3d targetPos = default)
+        {
+            bool result = false;
             for (int i = 0; i < skills.Count; i++)
             {
-                TryCastSkill(i, target, targetPos);
+                result = TryCastSkill(i, target, targetPos);
+                if (result)
+                    break;
             }
+
+            return result;
         }
 
         public bool TryCastSkill(int skillIndex, EntityStats target = null, Vector3d targetPos = default)
@@ -87,7 +116,7 @@ namespace Xiangsoft.Game.Skill
             }
 
             skill.ResetCD();
-
+            Debug.Log($"Cast skill: {skill.Data.SkillName}");
             if (skill.Data.TriggersGCD)
                 currentGCD = skill.Data.GCDTime;
 

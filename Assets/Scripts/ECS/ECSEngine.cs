@@ -7,7 +7,6 @@ using Xiangsoft.Lib.ECS.Grid;
 using Xiangsoft.Lib.ECS.System;
 using Xiangsoft.Lib.ECS.World;
 using Xiangsoft.Lib.Interface;
-using Xiangsoft.Lib.LockStep;
 using Xiangsoft.Lib.Pathfinding;
 
 namespace Xiangsoft.Lib.ECS
@@ -60,12 +59,9 @@ namespace Xiangsoft.Lib.ECS
                 new MeleeCombatSystem(World),
                 new ExpGemSystem(World)
             };
-
-            TimeManager.Instance.RegisterLogicUpdate(logicUpdate);
-            TimeManager.Instance.StartLogic = true;
         }
 
-        private void logicUpdate(Fixed64 logicTickTime)
+        public void LogicUpdate(Fixed64 logicTickTime)
         {
             if (World.ActiveEntityCount == 0 || World.StatsBridge[PlayerEntityID].IsDead)
                 return;

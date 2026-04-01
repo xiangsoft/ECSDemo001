@@ -24,8 +24,6 @@ namespace Xiangsoft.Game.Network
         {
             if (Instance == null)
                 Instance = this;
-
-            registerFormatter();
         }
 
         private void Start()
@@ -48,12 +46,6 @@ namespace Xiangsoft.Game.Network
             client.TickOutgoing();
         }
 
-        private void registerFormatter()
-        {
-            //FrameData.RegisterFormatter();
-            //PlayerCommand.RegisterFormatter();
-        }
-
         public void SendLocalCommand(PlayerCommand cmd)
         {
             if (!IsConnected)
@@ -72,7 +64,7 @@ namespace Xiangsoft.Game.Network
         {
             ReadOnlySpan<byte> span = new ReadOnlySpan<byte>(message.Array, message.Offset, message.Count);
             FrameData frame = MemoryPackSerializer.Deserialize<FrameData>(span);
-
+            
             // 将服务器下发的确定性帧塞入队列，等待 TimeManager 消费
             FrameQueue.Enqueue(frame);
         }

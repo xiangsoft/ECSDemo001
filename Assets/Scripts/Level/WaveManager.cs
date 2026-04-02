@@ -97,6 +97,12 @@ namespace Xiangsoft.Game.Level
             Vector2d randomCircle = insideUnitCircle().Normal * RandomManager.Instance.Range((Fixed64)MinSpawnRadius, (Fixed64)MaxSpawnRadius);
             Vector3d spawnPos = PlayerTransform.position.ToVector3d() + new Vector3d(randomCircle.x, Fixed64.Zero, randomCircle.y);
 
+            while (!ECSEngine.Instance.FlowGrid.IsWalkable(spawnPos))
+            {
+                randomCircle = insideUnitCircle().Normal * RandomManager.Instance.Range((Fixed64)MinSpawnRadius, (Fixed64)MaxSpawnRadius);
+                spawnPos = PlayerTransform.position.ToVector3d() + new Vector3d(randomCircle.x, Fixed64.Zero, randomCircle.y);
+            }
+
             // 从对象池拿到怪物
             EntityAuthoring enemy = UnitPool.Instance.Get(wave.EnemyPrefab, spawnPos, FixedQuaternion.Identity);
 

@@ -1,0 +1,19 @@
+{
+    "name": "Xiangsoft.Game.CrossRoad",
+    "rootNamespace": "Xiangsoft.Game.CrossRoad",
+    "references": [
+        "UnityEngine.UI",
+        "Xiangsoft.Game.Framework",
+        "Xiangsoft.Game.Net",
+        "Unity.InputSystem"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

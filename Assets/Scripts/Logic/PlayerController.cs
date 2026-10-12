@@ -72,9 +72,11 @@ namespace Xiangsoft.Game.Logic
 
         private Vector3d handleMouseInput()
         {
-            if (Input.GetMouseButtonDown(0))
+            var mouse = UnityEngine.InputSystem.Mouse.current;
+            if (mouse != null && mouse.leftButton.wasPressedThisFrame)
             {
-                Vector3 mousePos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f);
+                var mp = mouse.position.ReadValue();
+                Vector3 mousePos = new Vector3(mp.x, mp.y, 10f);
                 Vector3 worldMousePos = Camera.main.ScreenToWorldPoint(mousePos);
                 return worldMousePos.ToVector3d();
             }

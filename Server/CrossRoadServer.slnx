@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/CrossRoadServer/CrossRoadServer.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/EchoProbe/EchoProbe.csproj" />
+  </Folder>
+</Solution>

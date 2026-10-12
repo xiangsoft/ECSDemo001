@@ -1,0 +1,8 @@
+﻿<Solution>
+  <Project Path="Xiangsoft.Game.CrossRoad.csproj" />
+  <Project Path="Assembly-CSharp.csproj" />
+  <Project Path="Assembly-CSharp-Editor.csproj" />
+  <Project Path="Xiangsoft.Game.Net.csproj" />
+  <Project Path="Xiangsoft.Game.CrossRoad.Tests.csproj" />
+  <Project Path="Xiangsoft.Game.Framework.csproj" />
+</Solution>

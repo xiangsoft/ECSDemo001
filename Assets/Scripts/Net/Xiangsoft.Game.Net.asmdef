@@ -1,0 +1,16 @@
+{
+    "name": "Xiangsoft.Game.Net",
+    "rootNamespace": "Xiangsoft.Game.Net",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "protobuf-net.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
